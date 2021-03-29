@@ -63,3 +63,50 @@ quickSort (x : xs) =
   let smaller = quickSort [a | a <- xs, a < x]
       bigger = quickSort [a | a <- xs, a >= x]
    in smaller ++ [x] ++ bigger
+
+twice :: (t -> t) -> t -> t
+twice f x = f (f x)
+
+zipWith' :: (t1 -> t2 -> a) -> [t1] -> [t2] -> [a]
+zipWith' _ [] _ = []
+zipWith' _ _ [] = []
+zipWith' f (x : xs) (y : ys) = f x y : zipWith' f xs ys
+
+f :: Ord a => [a] -> [a]
+f [] = []
+f (x : y) = let l = f (filter (<= x) y); g = f (filter (> x) y) in l ++ [x] ++ g
+
+flip' :: (t1 -> t2 -> t3) -> t2 -> t1 -> t3
+flip' f = g where g y x = f x y
+
+map' :: (t -> a) -> [t] -> [a]
+map' _ [] = []
+map' f (x : xs) = f x : map' f xs
+
+filter' :: (a -> Bool) -> [a] -> [a]
+filter' _ [] = []
+filter' f (x : xs)
+  | f x = x : filter' f xs
+  | otherwise = filter' f xs
+
+collatz :: (Integral a) => a -> [a]
+collatz 1 = [1]
+collatz n
+  | even n = n : collatz (div n 2)
+  | odd n = n : collatz (n * 3 + 1)
+
+sum2 :: (Num a) => [a] -> a
+sum2 = foldl (+) 0
+
+elem2 :: (Foldable t, Eq a) => a -> t a -> Bool
+elem2 x = foldl (\curr e -> if e == x then True else curr) False
+
+flat :: [[a]] -> [a]
+flat [] = []
+flat (x : xs) = x ++ flat xs
+
+flatMap :: (a1 -> [a2]) -> [a1] -> [a2]
+flatMap f xs = flat (map f xs)
+
+minusAll :: [Integer] -> [Integer]
+minusAll = map (negate . abs)
