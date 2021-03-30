@@ -1,5 +1,8 @@
 module Main where
 
+import Data.Map (Map, fromList, lookup)
+import Prelude hiding (lookup)
+
 main :: IO ()
 main = print (length' "mangonob")
 
@@ -110,3 +113,67 @@ flatMap f xs = flat (map f xs)
 
 minusAll :: [Integer] -> [Integer]
 minusAll = map (negate . abs)
+
+data Person = Person
+  { firstName :: String,
+    lastName :: String,
+    age :: Int
+  }
+  deriving (Eq, Show, Read)
+
+data Vector a = Vector a a a deriving (Show)
+
+add :: Num a => Vector a -> Vector a -> Vector a
+add (Vector x1 y1 z1) (Vector x2 y2 z2) = Vector (x1 + x2) (y1 + y2) (z1 + z2)
+
+mult :: Num a => Vector a -> Vector a -> Vector a
+mult (Vector x1 y1 z1) (Vector x2 y2 z2) = Vector (x1 * x2) (y1 * y2) (z1 * z2)
+
+salarMult :: Num a => Vector a -> Vector a -> a
+salarMult (Vector x1 y1 z1) (Vector x2 y2 z2) = x1 * x2 + y1 * y2 + z1 * z2
+
+data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday
+  deriving (Eq, Ord, Show, Read, Bounded, Enum)
+
+type PhoneBook = [(String, String)]
+
+phoneBook :: PhoneBook
+phoneBook =
+  [ ("betty", "555-2938"),
+    ("bonnie", "452-2928"),
+    ("patsy", "493-2928"),
+    ("lucille", "205-2928"),
+    ("wendy", "939-8282"),
+    ("penny", "853-2492")
+  ]
+
+inPhoneBook :: String -> String -> PhoneBook -> Bool
+inPhoneBook name phone book = (name, phone) `elem` book
+
+type AssociatedList k v = [(k, v)]
+
+data LockerState = Taken | Free deriving (Show, Eq)
+
+type Code = String
+
+type LockerMap = Map Int (LockerState, Code)
+
+lockerLookup :: Int -> LockerMap -> Either String Code
+lockerLookup n map =
+  case lookup n map of
+    Nothing -> Left $ "Locker number " ++ show n ++ " doesn't exist!"
+    Just (state, code) ->
+      if state /= Taken
+        then Right code
+        else Left $ "Locker " ++ show n ++ " is aready taken!"
+
+lockers :: LockerMap
+lockers =
+  fromList
+    [ (100, (Taken, "ZD39I")),
+      (101, (Free, "JAH3I")),
+      (103, (Free, "IQSA9")),
+      (105, (Free, "QOTSA")),
+      (109, (Taken, "893JJ")),
+      (110, (Taken, "99292"))
+    ]
