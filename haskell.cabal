@@ -34,6 +34,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
+    , directory
   default-language: Haskell2010
 
 executable haskell-exe
@@ -46,6 +47,7 @@ executable haskell-exe
   build-depends:
       base >=4.7 && <5
     , containers
+    , directory
     , haskell
   default-language: Haskell2010
 
@@ -60,5 +62,6 @@ test-suite haskell-test
   build-depends:
       base >=4.7 && <5
     , containers
+    , directory
     , haskell
   default-language: Haskell2010
