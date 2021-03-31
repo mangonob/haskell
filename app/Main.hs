@@ -177,3 +177,28 @@ lockers =
       (109, (Taken, "893JJ")),
       (110, (Taken, "99292"))
     ]
+
+infixr 5 :+:
+
+data List a = Empty | a :+: (List a) deriving (Show, Read, Eq, Ord)
+
+infixr 5 .++
+
+(.++) :: List a -> List a -> List a
+Empty .++ ys = ys
+(x :+: xs) .++ ys = x :+: (xs .++ ys)
+
+class YesNo a where
+  yesno :: a -> Bool
+
+instance YesNo [a] where
+  yesno [] = False
+  yesno _ = True
+
+instance YesNo Int where
+  yesno 0 = False
+  yesno _ = True
+
+instance YesNo (Maybe a) where
+  yesno Nothing = False
+  yesno _ = True
