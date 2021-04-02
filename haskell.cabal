@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      JSONParser
       Lib
       Parser
       Tree
@@ -38,6 +39,7 @@ library
     , containers >=0.6 && <1
     , directory >=1.3 && <2
     , random >=1.1 && <2
+    , regex-compat >=0.95 && <1
   default-language: Haskell2010
 
 executable haskell-exe
@@ -54,6 +56,7 @@ executable haskell-exe
     , directory >=1.3 && <2
     , haskell
     , random >=1.1 && <2
+    , regex-compat >=0.95 && <1
   default-language: Haskell2010
 
 test-suite haskell-test
@@ -71,4 +74,5 @@ test-suite haskell-test
     , directory >=1.3 && <2
     , haskell
     , random >=1.1 && <2
+    , regex-compat >=0.95 && <1
   default-language: Haskell2010
