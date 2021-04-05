@@ -28,6 +28,7 @@ library
       JSONParser
       Lib
       Parser
+      RBTree
       Tree
   other-modules:
       Paths_haskell
