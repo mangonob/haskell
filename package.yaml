@@ -26,6 +26,8 @@ dependencies:
   - random >= 1.1 && < 2
   - bytestring >= 0.10 && < 1
   - regex-compat >= 0.95 && < 1
+  - mtl >= 2.2 && < 3
+  - dlist >= 0.8 && < 1
 
 library:
   source-dirs: src
