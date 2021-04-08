@@ -30,6 +30,7 @@ library
       Lib
       Parser
       RBTree
+      Stack
       Tree
   other-modules:
       Paths_haskell

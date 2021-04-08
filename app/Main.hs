@@ -1,15 +1,10 @@
 module Main where
 
-import Control.Monad.Writer
-import Data.DList
-
 main :: IO ()
-main = putStrLn "42"
+main = putStrLn "Hello world!"
 
-gcd' :: Int -> Int -> Writer [String] Int
-gcd' a 0 = do
-  tell ["Finished with " ++ show a]
-  return a
-gcd' a b = do
-  tell [show a ++ " mod " ++ show b ++ " = " ++ show (mod a b)]
-  gcd' b (mod a b)
+a :: Double -> Double
+a = do
+  a <- (* 10)
+  b <- (/ 3)
+  return (a + b)
