@@ -5,13 +5,14 @@ main = do
   line <- fmap reverse getLine
   putStrLn line
 
-data Wrapper a = Wrapper a deriving (Show)
+data Action a = Pop a | Top a | Bottom a deriving (Show)
 
-instance Functor Wrapper where
-  fmap f (Wrapper x) = Wrapper $ f x
-
-data ReversedList a = ReversedList {getList :: [a]} deriving (Show)
-
-instance Functor ReversedList where
-  fmap _ (ReversedList []) = ReversedList []
-  fmap f (ReversedList (x : xs)) = ReversedList $ (getList $ fmap f $ ReversedList xs) ++ [f x]
+solve :: (Ord a, Num a) => [a] -> [Action a]
+solve [] = []
+solve xs
+  | sum l < sum r = (map (\x -> Bottom x) l) ++ [Pop m] ++ solve (t ++ l)
+  | otherwise = (map (\x -> Top x) (reverse r)) ++ [Pop m] ++ solve (t ++ l)
+  where
+    m = minimum xs
+    (l, r) = break (== m) xs
+    t = tail r
