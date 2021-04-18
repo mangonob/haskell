@@ -35,3 +35,19 @@ instance Monad Optional where
   return x = Some x
   Nil >>= _ = Nil
   Some x >>= f = f x
+
+landLeft :: (Ord b, Num b) => b -> (b, b) -> Maybe (b, b)
+landLeft x (left, right)
+  | abs (left + x - right) < 4 = Just (left + x, right)
+  | otherwise = Nothing
+
+landRight :: (Ord b, Num b) => b -> (b, b) -> Maybe (b, b)
+landRight x (left, right)
+  | abs (right + x - left) < 4 = Just (left, right + x)
+  | otherwise = Nothing
+
+foo :: (Ord a, Num a) => Maybe (a, a)
+foo = do
+  a <- return (0, 0)
+  b <- landLeft 3 a
+  landRight 3 b
