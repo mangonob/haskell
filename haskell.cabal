@@ -33,6 +33,7 @@ library
       RBTree
       Stack
       Tree
+      Zippers
   other-modules:
       Paths_haskell
   hs-source-dirs:
