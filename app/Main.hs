@@ -1,6 +1,8 @@
 module Main where
 
 import Control.Applicative
+import Control.Monad
+import Data.List
 
 main :: IO ()
 main = do
@@ -46,8 +48,35 @@ landRight x (left, right)
   | abs (right + x - left) < 4 = Just (left, right + x)
   | otherwise = Nothing
 
-foo :: (Ord a, Num a) => Maybe (a, a)
-foo = do
-  a <- return (0, 0)
-  b <- landLeft 3 a
-  landRight 3 b
+moveNight :: (Int, Int) -> [(Int, Int)]
+moveNight (x, y) = do
+  (x', y') <-
+    [ (x + 1, y + 2),
+      (x + 1, y - 2),
+      (x - 1, y + 2),
+      (x - 1, y - 2),
+      (x + 2, y + 1),
+      (x + 2, y - 1),
+      (x - 2, y + 1),
+      (x - 2, y - 1)
+      ]
+  guard (elem x' [1 .. 8] && elem y' [1 .. 8])
+  return (x', y')
+
+-- K步可以移动到的点
+moveK :: Int -> (Int, Int) -> [(Int, Int)]
+moveK k (x, y) = nub $ foldl (>>=) (return (x, y)) $ replicate k moveNight
+
+-- K步可以移动到的点
+moveInK :: Int -> (Int, Int) -> [(Int, Int)]
+moveInK k (x, y) = nub $ concat $ moveK <$> [1 .. k] <*> pure (x, y)
+
+-- 到达棋盘上所有点的最少步数的最大值
+minStep :: (Int, Int) -> Int
+minStep (x, y) = succ $ length $ takeWhile (/= 64) $ fmap length $ moveInK <$> [1 ..] <*> pure (x, y)
+
+allStep :: [((Int, Int), Int)]
+allStep = do
+  x <- [1 .. 8]
+  y <- [1 .. 8]
+  return ((x, y), minStep (x, y))
