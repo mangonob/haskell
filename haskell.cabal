@@ -27,6 +27,7 @@ library
   exposed-modules:
       Crypt.CaesarCipher
       DiffList
+      FS
       JSONParser
       Lib
       Parser

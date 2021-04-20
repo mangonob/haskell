@@ -37,12 +37,36 @@ data Crumb a = LeftCrumb a (Tree a) | RightCrumb a (Tree a) deriving (Show)
 
 type Breadcrumbs a = [Crumb a]
 
-goLeft :: (Tree a, Breadcrumbs a) -> (Tree a, Breadcrumbs a)
+type Zipper a = (Tree a, Breadcrumbs a)
+
+goLeft :: (Zipper a) -> (Zipper a)
 goLeft (Node x l r, xs) = (l, LeftCrumb x r : xs)
 
-goRight :: (Tree a, Breadcrumbs a) -> (Tree a, Breadcrumbs a)
+goRight :: (Zipper a) -> (Zipper a)
 goRight (Node x l r, xs) = (r, RightCrumb x l : xs)
 
-goUp :: (Tree a, Breadcrumbs a) -> (Tree a, Breadcrumbs a)
+goUp :: (Zipper a) -> (Zipper a)
 goUp (t, LeftCrumb x r : xs) = (Node x t r, xs)
 goUp (t, RightCrumb x l : xs) = (Node x l t, xs)
+
+(-:) :: t1 -> (t1 -> t2) -> t2
+x -: f = f x
+
+modify :: (a -> a) -> (Tree a, Breadcrumbs a) -> (Tree a, Breadcrumbs a)
+modify f (Node x l r, bs) = (Node (f x) l r, bs)
+modify _ (Empty, bs) = (Empty, bs)
+
+attach :: Tree a -> Zipper a -> Zipper a
+attach t (_, bs) = (t, bs)
+
+topMost :: Zipper a -> Zipper a
+topMost (t, []) = (t, [])
+topMost z = topMost $ goUp z
+
+type ListZipper a = ([a], [a])
+
+goForward :: ListZipper a -> ListZipper a
+goForward (x : xs, bs) = (xs, x : bs)
+
+goBack :: ListZipper a -> ListZipper a
+goBack (xs, b : bs) = (b : xs, bs)
