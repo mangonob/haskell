@@ -26,6 +26,8 @@ source-repository head
 library
   exposed-modules:
       Crypt.CaesarCipher
+      Crypt.Prime
+      Crypt.RSA
       DiffList
       FS
       JSONParser
