@@ -1,7 +1,14 @@
 module Main where
 
-main :: IO ()
-main = interact respondPalindromes
+import Data.ByteString.Lazy as B
+import System.Environment
 
-respondPalindromes :: String -> String
-respondPalindromes = unlines . map (\x -> if x == reverse x then "palindrome" else "not a palindrome") . lines
+main :: IO ()
+main = do
+  (source : dest : _) <- getArgs
+  mv source dest
+
+mv :: FilePath -> FilePath -> IO ()
+mv source dest = do
+  contents <- B.readFile source
+  B.writeFile dest contents
