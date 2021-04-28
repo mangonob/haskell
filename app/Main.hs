@@ -1,14 +1,16 @@
+{-# LANGUAGE ViewPatterns #-}
+
 module Main where
 
-import Data.ByteString.Lazy as B
-import System.Environment
-
 main :: IO ()
-main = do
-  (source : dest : _) <- getArgs
-  mv source dest
+main = interact id
 
-mv :: FilePath -> FilePath -> IO ()
-mv source dest = do
-  contents <- B.readFile source
-  B.writeFile dest contents
+np :: (Ord a, Num a) => a -> a -> Maybe a
+np k n = if (n >= k) then Just (n - k) else Nothing
+
+fib :: Int -> Integer
+fib = (fmap memo [0 ..] !!)
+  where
+    memo 0 = 1
+    memo 1 = 1
+    memo (np 2 -> Just n) = fib n + fib (n + 1)

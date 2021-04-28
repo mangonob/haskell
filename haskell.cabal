@@ -35,6 +35,7 @@ library
       Lib
       Parser
       RBTree
+      Set
       Stack
       Tree
       Zippers
