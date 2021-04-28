@@ -1,5 +1,7 @@
 {-# LANGUAGE ViewPatterns #-}
 
+module JList () where
+
 data JList a
   = Empty
   | Single a

@@ -14,3 +14,10 @@ fib = (fmap memo [0 ..] !!)
     memo 0 = 1
     memo 1 = 1
     memo (np 2 -> Just n) = fib n + fib (n + 1)
+
+both :: b -> (b, b)
+both x = (x, x)
+
+f :: [a] -> [a]
+f (both -> (xs, h : _)) = h : xs
+f x = x
