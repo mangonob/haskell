@@ -30,6 +30,7 @@ library
       Crypt.RSA
       DiffList
       FS
+      JList
       JSONParser
       Lib
       Parser
