@@ -25,6 +25,8 @@ source-repository head
 
 library
   exposed-modules:
+      Algo
+      Algo.NumberTheory
       Crypt.CaesarCipher
       Crypt.Prime
       Crypt.RSA

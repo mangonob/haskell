@@ -1,23 +1,6 @@
-{-# LANGUAGE ViewPatterns #-}
-
 module Main where
+
+import Algo
 
 main :: IO ()
 main = interact id
-
-np :: (Ord a, Num a) => a -> a -> Maybe a
-np k n = if (n >= k) then Just (n - k) else Nothing
-
-fib :: Int -> Integer
-fib = (fmap memo [0 ..] !!)
-  where
-    memo 0 = 1
-    memo 1 = 1
-    memo (np 2 -> Just n) = fib n + fib (n + 1)
-
-both :: b -> (b, b)
-both x = (x, x)
-
-f :: [a] -> [a]
-f (both -> (xs, h : _)) = h : xs
-f x = x

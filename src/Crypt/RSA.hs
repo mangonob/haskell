@@ -1,5 +1,6 @@
 module Crypt.RSA (genKey, encrypt, decrypt) where
 
+import Algo.NumberTheory
 import Crypt.Prime
 import System.Random
 
@@ -21,7 +22,7 @@ genKey = do
   let n = p * q
   let l = lcm (p - 1) (q - 1)
   let (e, genD) = genR (\x -> gcd x l == 1) (2, l - 1) genE
-  let (_, d, _) = exEuclid e l
+  let (_, d, _) = exGcd e l
   return (Public n e, Private n (mod (d + l) l))
 
 -- Gen prime number in range
@@ -41,9 +42,3 @@ encrypt (Public n e) x = modPow n e x
 
 decrypt :: Key -> Integer -> Integer
 decrypt (Private n d) x = modPow n d x
-
-exEuclid :: Integral c => c -> c -> (c, c, c)
-exEuclid a 0 = (a, 1, 0)
-exEuclid a b =
-  let (d', x', y') = exEuclid b (mod a b)
-   in (d', y', x' - (div a b) * y')
