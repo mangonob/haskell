@@ -27,6 +27,8 @@ library
   exposed-modules:
       Algo
       Algo.NumberTheory
+      Compiler
+      Compiler.Simple
       Crypt.CaesarCipher
       Crypt.Prime
       Crypt.RSA
