@@ -29,7 +29,10 @@ library
       Algo.NumberTheory
       Compiler
       Compiler.Simple
+      Compiler.StraightLine
       Compiler.Swift
+      Compiler.Tiger.Lexer
+      Compiler.Tiger.Parser
       Crypt.CaesarCipher
       Crypt.Prime
       Crypt.RSA
