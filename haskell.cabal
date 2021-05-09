@@ -28,6 +28,7 @@ library
       Algo
       Algo.NumberTheory
       Compiler
+      Compiler.Data.Graph
       Compiler.Simple
       Compiler.StraightLine
       Compiler.Swift
