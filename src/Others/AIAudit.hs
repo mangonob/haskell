@@ -44,6 +44,9 @@ twice = do
 
 _in x y z = z > x && z <= y
 
+prdBad :: ([(Double, Double)], Double)
+prdBad = ([(500000.0, 0.0), (1000000, 0.000080), (3000000, 0.000060), (5000000, 0.00040)], 1000.0)
+
 prd1 :: ([(Double, Double)], Double)
 prd1 = ([(1000000.0, 0.015), (3000000, 0.01), (5000000, 0.005)], 1000.0)
 
@@ -125,7 +128,11 @@ histogram s n (y : ys) =
 
 nGaussian = gaussian 0 1
 
-normalGenerate gen = generateDataSet (gaussian 400000 2000000) gen [1, 100 .. 10000000]
+normalGenerate = individualGenerate
+
+individualGenerate gen = generateDataSet (gaussian 400000 2000000) gen [1, 100 .. 10000000]
+
+organizationGenerate gen = generateDataSet (gaussian 6000000 2000000) gen [1, 100 .. 10000000]
 
 dangerGenerate gen = generateDataSet (gaussian 5000000 200000) gen [1, 100 .. 10000000]
 
@@ -137,7 +144,16 @@ createExample = do
 createRatesExample prd = do
   gen <- newStdGen
   let dataSet = normalGenerate gen
-  return $ fmap (\x -> [x, calFee prd x]) dataSet
+  nGen <- newStdGen
+  let (count, _) = randomR (250, 300) nGen
+  pick count $ fmap (\x -> [x, calFee prd x]) dataSet
+
+createShareFeeExample prd nav = do
+  gen <- newStdGen
+  let dataSet = normalGenerate gen
+  nGen <- newStdGen
+  let (count, _) = randomR (250, 300) nGen
+  pick count $ fmap (\x -> [x, x * nav, calFee prd x]) dataSet
 
 createFeeExample prd = do
   gen <- newStdGen
@@ -154,7 +170,7 @@ filterHistogram r gen ((x : y : t) : xs) =
 
 createAmountExample = do
   gen <- newStdGen
-  let dataSet = dangerGenerate gen
+  let dataSet = normalGenerate gen
   dumpG <- newStdGen
   return $ filterHistogram 0.8 dumpG $ histogram 100000 1 dataSet
 
