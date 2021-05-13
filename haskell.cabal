@@ -42,6 +42,7 @@ library
       JList
       JSONParser
       Lib
+      Others.AIAudit
       Parser
       RBTree
       Set
