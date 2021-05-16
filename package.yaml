@@ -30,6 +30,7 @@ dependencies:
   - dlist >= 0.8 && < 1
   - time >= 1.9 && < 2
   - aeson
+  - text
 
 library:
   source-dirs: src
