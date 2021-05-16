@@ -92,3 +92,29 @@ foldRPN (x : y : ys) "+" = return ((y + x) : ys)
 foldRPN (x : y : ys) "-" = return ((y - x) : ys)
 foldRPN (x : y : ys) "/" = return ((y / x) : ys)
 foldRPN xs numberString = liftM (: xs) (readMaybe numberString)
+
+type KnightPos = (Int, Int)
+
+moveKnight :: KnightPos -> [KnightPos]
+moveKnight (x, y) =
+  filter inRange $
+    map
+      (add (x, y))
+      [ (1, 2),
+        (1, -2),
+        (-1, 2),
+        (-1, -2),
+        (2, 1),
+        (2, -1),
+        (-2, 1),
+        (-2, -1)
+      ]
+  where
+    inRange (a, b) = elem a [1 .. 8] && elem b [1 .. 8]
+    add (x, y) (z, w) = (x + z, y + w)
+
+inMany :: Int -> KnightPos -> [KnightPos]
+inMany x start = return start >>= foldl (<=<) return (replicate x moveKnight)
+
+canReachIn :: Int -> KnightPos -> KnightPos -> Bool
+canReachIn x start end = elem end $ inMany x start
