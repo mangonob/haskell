@@ -28,6 +28,8 @@ library
       Algo
       Algo.Data.RBTree
       Algo.NumberTheory
+      Algo.Pretty
+      Algo.Pretty.RBTree
       Compiler
       Compiler.Data.Graph
       Compiler.Simple
