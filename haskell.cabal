@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Algo
+      Algo.Data.RBTree
       Algo.NumberTheory
       Compiler
       Compiler.Data.Graph
@@ -45,7 +46,6 @@ library
       Others.AIAudit
       Parser
       Prob
-      RBTree
       Set
       Stack
       Tree

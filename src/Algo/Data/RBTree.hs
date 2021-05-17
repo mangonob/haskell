@@ -1,16 +1,10 @@
-module RBTree
+module Algo.Data.RBTree
   ( RBTree (..),
     Color (..),
     insert,
     singleton,
-    red,
-    black,
-    isRed,
-    isBlack,
-    blackHeight,
-    rotateL,
-    rotateR,
     fromList,
+    remove,
   )
 where
 
@@ -20,28 +14,6 @@ data RBTree a
   = Empty
   | Node {color :: Color, value :: a, left :: (RBTree a), right :: (RBTree a)}
   deriving (Show, Eq)
-
-quotes :: [Char] -> [Char]
-quotes x = '"' : x ++ "\""
-
-newtype PrettyRBTree a = PrettyRBTree {getRBTree :: RBTree a}
-
-instance (Show a) => Show (PrettyRBTree a) where
-  show (PrettyRBTree {getRBTree = Empty}) = quotes "Empty"
-  show (PrettyRBTree {getRBTree = Node c x l r}) =
-    "{"
-      ++ "color: "
-      ++ ( quotes $ case c of
-             Red -> "Red"
-             Black -> "Black"
-         )
-      ++ ", value: "
-      ++ show x
-      ++ ", left: "
-      ++ (show $ PrettyRBTree l)
-      ++ ", right: "
-      ++ (show $ PrettyRBTree r)
-      ++ "}"
 
 singleton :: a -> RBTree a
 singleton x = Node Black x Empty Empty
