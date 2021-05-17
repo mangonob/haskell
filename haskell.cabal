@@ -44,6 +44,7 @@ library
       Lib
       Others.AIAudit
       Parser
+      Prob
       RBTree
       Set
       Stack
