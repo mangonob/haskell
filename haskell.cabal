@@ -54,6 +54,13 @@ library
       RealWorldHaskell.CH03.ListADT
       RealWorldHaskell.CH03.Point
       RealWorldHaskell.CH03.Tree
+      RealWorldHaskell.CH04.Adler32
+      RealWorldHaskell.CH04.Chore
+      RealWorldHaskell.CH04.InteractWith
+      RealWorldHaskell.CH04.IntParse
+      RealWorldHaskell.CH04.List
+      RealWorldHaskell.CH04.Plus
+      RealWorldHaskell.CH04.SplitLines
       Set
       Stack
       Tree
