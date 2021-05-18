@@ -7,3 +7,7 @@ data Tree a
 
 simpleTree :: Tree [Char]
 simpleTree = Node "parent" (Node "left child" Empty Empty) (Node "right child" Empty Empty)
+
+height :: Tree a -> Int
+height Empty = 0
+height (Node _ l r) = max (height l) (height r) + 1

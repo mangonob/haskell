@@ -52,6 +52,7 @@ library
       RealWorldHaskell.CH03.BookStore
       RealWorldHaskell.CH03.Chore
       RealWorldHaskell.CH03.ListADT
+      RealWorldHaskell.CH03.Point
       RealWorldHaskell.CH03.Tree
       Set
       Stack
