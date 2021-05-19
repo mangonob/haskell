@@ -61,6 +61,10 @@ library
       RealWorldHaskell.CH04.List
       RealWorldHaskell.CH04.Plus
       RealWorldHaskell.CH04.SplitLines
+      RealWorldHaskell.CH05.Chore
+      RealWorldHaskell.CH05.Prettify
+      RealWorldHaskell.CH05.PrettyJSON
+      RealWorldHaskell.CH05.SimpleJSON
       Set
       Stack
       Tree
