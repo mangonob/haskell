@@ -66,6 +66,7 @@ library
       RealWorldHaskell.CH05.PrettyJSON
       RealWorldHaskell.CH05.SimpleJSON
       RealWorldHaskell.CH06.Chore
+      RealWorldHaskell.CH07.Chore
       Set
       Stack
       Tree
