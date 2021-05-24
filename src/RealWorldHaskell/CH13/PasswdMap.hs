@@ -1,6 +1,8 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 
+module RealWorldHaskell.CH13.PasswdMap where
+
 import qualified Data.Map as M
 import RealWorldHaskell.CH13.Common
 import System.Environment
