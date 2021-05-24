@@ -70,6 +70,12 @@ library
       RealWorldHaskell.CH08.Chore
       RealWorldHaskell.CH08.Glob
       RealWorldHaskell.CH08.GlobRegex
+      RealWorldHaskell.CH13.Chore
+      RealWorldHaskell.CH13.Colors
+      RealWorldHaskell.CH13.Common
+      RealWorldHaskell.CH13.Num
+      RealWorldHaskell.CH13.Passwd
+      RealWorldHaskell.CH13.PasswdMap
       Set
       Stack
       Tree
