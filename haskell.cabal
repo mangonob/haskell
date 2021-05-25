@@ -70,6 +70,8 @@ library
       RealWorldHaskell.CH08.Chore
       RealWorldHaskell.CH08.Glob
       RealWorldHaskell.CH08.GlobRegex
+      RealWorldHaskell.CH10.Parse
+      RealWorldHaskell.CH10.PNM
       RealWorldHaskell.CH13.Chore
       RealWorldHaskell.CH13.Colors
       RealWorldHaskell.CH13.Common
