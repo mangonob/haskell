@@ -78,6 +78,9 @@ library
       RealWorldHaskell.CH13.Num
       RealWorldHaskell.CH13.Passwd
       RealWorldHaskell.CH13.PasswdMap
+      RealWorldHaskell.CH14.Chore
+      RealWorldHaskell.CH14.Logger
+      RealWorldHaskell.CH14.Optional
       Set
       Stack
       Tree

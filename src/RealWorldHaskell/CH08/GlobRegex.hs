@@ -2,7 +2,7 @@
 
 module RealWorldHaskell.CH08.GlobRegex where
 
-import Text.Regex.Posix
+import Text.Regex.Posix ((=~))
 
 globToRegex :: String -> String
 globToRegex = ('^' :) . (++ "$") . globToRegex'
