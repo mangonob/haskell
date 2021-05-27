@@ -81,7 +81,7 @@ library
       RealWorldHaskell.CH14.Chore
       RealWorldHaskell.CH14.Logger
       RealWorldHaskell.CH14.Optional
-      RealWorldHaskell.CH16.A
+      RealWorldHaskell.CH24.Compressor
       Set
       Stack
       Tree
@@ -99,6 +99,7 @@ library
     , directory >=1.3 && <2
     , dlist >=0.8 && <1
     , filepath >=1.4 && <2
+    , haskeline
     , mtl >=2.2 && <3
     , random >=1.1 && <2
     , regex-compat >=0.95 && <1
@@ -106,6 +107,7 @@ library
     , text ==1.2.4.1
     , time >=1.9 && <2
     , vector
+    , zlib >=0.6 && <1
   default-language: Haskell2010
 
 executable haskell-exe
@@ -123,6 +125,7 @@ executable haskell-exe
     , directory >=1.3 && <2
     , dlist >=0.8 && <1
     , filepath >=1.4 && <2
+    , haskeline
     , haskell
     , mtl >=2.2 && <3
     , random >=1.1 && <2
@@ -131,6 +134,7 @@ executable haskell-exe
     , text ==1.2.4.1
     , time >=1.9 && <2
     , vector
+    , zlib >=0.6 && <1
   default-language: Haskell2010
 
 test-suite haskell-test
@@ -149,6 +153,7 @@ test-suite haskell-test
     , directory >=1.3 && <2
     , dlist >=0.8 && <1
     , filepath >=1.4 && <2
+    , haskeline
     , haskell
     , mtl >=2.2 && <3
     , random >=1.1 && <2
@@ -157,4 +162,5 @@ test-suite haskell-test
     , text ==1.2.4.1
     , time >=1.9 && <2
     , vector
+    , zlib >=0.6 && <1
   default-language: Haskell2010

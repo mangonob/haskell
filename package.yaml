@@ -34,6 +34,8 @@ dependencies:
   - regex-posix >= 0.96 && < 1
   - filepath >= 1.4 && < 2
   - vector
+  - zlib >= 0.6 && < 1
+  - haskeline
 
 library:
   source-dirs: src
