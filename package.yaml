@@ -33,6 +33,7 @@ dependencies:
   - text == 1.2.4.1
   - regex-posix >= 0.96 && < 1
   - filepath >= 1.4 && < 2
+  - vector
 
 library:
   source-dirs: src

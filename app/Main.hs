@@ -1,40 +1,21 @@
 {-# LANGUAGE ViewPatterns #-}
 
-import qualified Data.ByteString.Lazy as B
-import qualified Data.ByteString.Lazy.Char8 as C
-import Data.Char
-import System.Environment
+module Main where
+
+import Data.List (foldl')
+import qualified Data.Vector as V
+import System.Environment (getArgs)
+import Text.Printf (printf)
+
+data Pair a b = Pair !a !b
 
 main :: IO ()
 main = do
-  (fileName : _) <- getArgs
-  bs <- B.readFile fileName
-  putStrLn $ show $ sumBs bs
+  [d] <- map read `fmap` getArgs
+  printf "%f\n" $ mean $ V.enumFromTo 1 d
 
-sumBs :: B.ByteString -> Int
-sumBs (C.readInt -> Just (a, bs)) = a + sumBs (trim bs)
-sumBs (C.readInt -> Nothing) = 0
-
-trim :: B.ByteString -> B.ByteString
-trim (C.uncons -> Just ((isSpace -> True), ts)) = ts
-trim bs = bs
-
-drop' :: (Ord t, Num t) => t -> [a] -> [a]
-drop' n [] = []
-drop' ((<= 0) -> True) xs = xs
-drop' n (x : xs) = drop' (n - 1) xs
-
-if' :: Bool -> p -> p -> p
-if' True a b = a
-if' False a b = b
-
--- 使用章节前置的函数实现
-lastButOne :: [a] -> a
-lastButOne xs =
-  if null (drop 2 xs)
-    then head xs
-    else lastButOne (tail xs)
-
-lastButOne' :: [a] -> a
-lastButOne' (x : y : []) = x
-lastButOne' (x : y : xs) = lastButOne' (y : xs)
+mean :: V.Vector Double -> Double
+mean xs = s / fromIntegral n
+  where
+    Pair n s = V.foldl' k (Pair 0 0) xs
+    k (Pair n s) x = Pair (n + 1) (s + x)
