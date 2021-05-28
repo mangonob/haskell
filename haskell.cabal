@@ -81,7 +81,10 @@ library
       RealWorldHaskell.CH14.Chore
       RealWorldHaskell.CH14.Logger
       RealWorldHaskell.CH14.Optional
+      RealWorldHaskell.CH24.Chan
+      RealWorldHaskell.CH24.Chore
       RealWorldHaskell.CH24.Compressor
+      RealWorldHaskell.CH24.NiceFork
       Set
       Stack
       Tree
