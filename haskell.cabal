@@ -32,6 +32,7 @@ library
       Algo.Pretty.RBTree
       Compiler
       Compiler.Data.Graph
+      Compiler.Production
       Compiler.Simple
       Compiler.StraightLine
       Compiler.Swift
@@ -84,6 +85,7 @@ library
       RealWorldHaskell.CH24.Chan
       RealWorldHaskell.CH24.Chore
       RealWorldHaskell.CH24.Compressor
+      RealWorldHaskell.CH24.LockHierarchy
       RealWorldHaskell.CH24.NiceFork
       Set
       Stack
