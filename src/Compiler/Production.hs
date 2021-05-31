@@ -1,24 +1,38 @@
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE ViewPatterns #-}
 
-module Compiler.Production where
+module Compiler.Production
+  ( Production,
+    Symbol,
+    SymbolSets,
+    head,
+    body,
+    epsilon,
+    firsts,
+    follows,
+    isNoTerm,
+    isTerm,
+    nullables,
+    sym,
+  )
+where
 
-import Control.Monad.Writer
 import Data.Char (isLower, isSpace, isUpper)
 import Data.List (insert, intersperse, nub)
 import qualified Data.Map as M
 import qualified Data.Set as S
+import Utils (just, (??))
 import Prelude hiding (head)
 
 data Symbol
   = Empty
-  | -- 终结符号 (eg: id, num, 7)
+  | -- | Terminal symbol (eg: id, num, 7)
     Term String
-  | -- 非终结符号 (eg: A, Expr)
+  | -- | No terminal symbol (eg: A, Expr)
     NoTerm String
   deriving (Eq, Ord)
 
--- 空符号
+-- | Empty symbol.
 epsilon :: Symbol
 epsilon = Empty
 
@@ -68,70 +82,34 @@ instance Read Production where
             else map read body :: [Symbol]
      in [(Production hs bodySyms, "")]
 
-createProductions :: String -> [Production]
-createProductions = map read . lines
-
-main :: IO ()
-main = do
-  input <- getContents
-  putStrLn $ show $ createProductions input
-
-ps1 :: [Production]
-ps1 =
-  map
-    read
-    [ "Z -> d",
-      "Z -> X Y Z",
-      "Y ->",
-      "Y -> c",
-      "X -> Y",
-      "X -> a"
-    ]
-
-psE :: [Production]
-psE =
-  map
-    read
-    [ "E -> E + T",
-      "E -> E - T",
-      "E -> T",
-      "T -> T * F",
-      "T -> T / F",
-      "T -> F",
-      "F -> ( E )",
-      "F -> id",
-      "F -> num"
-    ]
-
-psL :: [Production]
-psL = map read ["E -> T", "T -> E"]
-
-sym :: String -> Symbol
+-- | Create a 'Symbol'.
+--
+-- >  sym "A" == NoTerm "A"
+-- >  sym "num" == Term "num"
+sym ::
+  -- | Symbol text
+  String ->
+  -- | Symbol
+  Symbol
 sym = read
 
-(??) :: Maybe a -> Maybe a -> Maybe a
-Just a ?? _ = Just a
-Nothing ?? x = x
-
-just :: Maybe a -> a
-just (Just x) = x
-just Nothing = error "not just value"
-
-(&&&) :: (t -> Bool) -> (t -> Bool) -> t -> Bool
-f &&& g = \x -> f x && g x
-
-nullables :: [Production] -> [(Symbol, Bool)]
-nullables ps = M.toList $ _nullables initial
+-- | 'nullables' use to judge Term-Symbol in a series of productions is nullable.
+nullables ::
+  -- | Productions
+  [Production] ->
+  -- | Nullable set (key: Symbol, value: Symbol is nullable(?))
+  M.Map Symbol Bool
+nullables ps = _nullables initial
   where
-    initial = M.fromList $ map (,False) $ nub $ map head ps
+    initial = M.fromList . map (,False) . nub $ map head ps
 
     _nullables m =
-      let newM = foldl steper m ps
+      let newM = foldl stp m ps
        in if newM == m
             then newM
             else _nullables newM
 
-    steper m (Production h bs)
+    stp m (Production h bs)
       | all isNullable bs = M.insert h True m
       | otherwise = m
       where
@@ -139,38 +117,57 @@ nullables ps = M.toList $ _nullables initial
         isNullable (Term x) = False
         isNullable noTermS = M.lookup noTermS m == Just True
 
-firsts :: [Production] -> [(Symbol, [Symbol])]
-firsts ps = map (\(k, v) -> (k, S.toList v)) $ M.toList $ _firsts initial
+untilSame :: (Eq t1, Foldable t2) => (t1 -> a -> t1) -> t1 -> t2 a -> t1
+untilSame step v xs =
+  let v' = foldl step v xs
+   in if v' == v
+        then v'
+        else untilSame step v' xs
+
+prefixWhen :: (a -> Bool) -> [a] -> [a]
+prefixWhen f [] = []
+prefixWhen f (x : xs) =
+  if f x
+    then x : prefixWhen f xs
+    else [x]
+
+type SymbolSets = M.Map Symbol (S.Set Symbol)
+
+firstIn :: SymbolSets -> Symbol -> S.Set Symbol
+firstIn m Empty = S.empty
+firstIn m (Term x) = S.singleton (Term x)
+firstIn m noTerm = just $ (M.lookup noTerm m) ?? Just S.empty
+
+-- | FIRST set of a series of productions.
+firsts :: [Production] -> SymbolSets
+firsts ps = untilSame step M.empty ps
   where
-    initial = M.empty
+    prefixes = prefixWhen (\s -> M.lookup s (nullables ps) == Just True)
 
-    nulls = map fst $ filter snd $ nullables ps
+    step m (Production h bs) =
+      let s = foldl S.union S.empty $ map (firstIn m) $ prefixes bs
+       in merge m $ M.singleton h s
 
-    prefixes [] = []
-    prefixes (x : xs) =
-      if elem x nulls
-        then x : prefixes xs
-        else [x]
+follows :: [Production] -> SymbolSets
+follows ps = untilSame step M.empty ps
+  where
+    firstOf = firstIn $ firsts ps
+    prefixes = prefixWhen (\s -> M.lookup s (nullables ps) == Just True)
+    postfixes = prefixes . reverse
 
-    _firsts m =
-      let newM = foldl steper m ps
-       in if newM == m
-            then newM
-            else _firsts newM
-
-    steper m (Production h bs) =
-      let s = foldl S.union S.empty $ map firstOf $ prefixes bs
-       in case M.lookup h m of
-            Nothing -> M.insert h s m
-            Just s' -> M.insert h (S.union s' s) m
+    step m (Production h bs) = merge m $ merge m' $ asRight bs
       where
-        firstOf Empty = S.empty
-        firstOf (Term x) = S.singleton (Term x)
-        firstOf noTerm = just $ (M.lookup noTerm m) ?? Just S.empty
+        m' = foldl step M.empty (postfixes bs)
+          where
+            step m sym = merge m $ M.singleton sym (followOf h)
 
-follows :: [Production] -> [(Symbol, [Symbol])]
-follows ps = map (\(k, v) -> (k, S.toList v)) $ M.toList $ _follows initial
-  where
-    initial = M.empty
+        asRight [] = M.empty
+        asRight (x : xs) = merge (foldl step M.empty (prefixes xs)) (asRight xs)
+          where
+            step m sym = merge m $ M.singleton x (firstOf sym)
 
-    _follows m = initial
+        followOf s = just $ M.lookup s m ?? Just S.empty
+
+-- | Merge two 'SymbolSet'.
+merge :: SymbolSets -> SymbolSets -> SymbolSets
+merge m1 m2 = M.mergeWithKey (\k s1 s2 -> Just $ S.union s1 s2) id id m1 m2

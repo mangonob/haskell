@@ -112,7 +112,7 @@ _removeMax (Node c x left right) =
 tint :: Color -> RBTree a -> RBTree a
 tint c = if c == Red then red else black
 
--- Parameters
+-- | Parameters
 --  * RBTree a :
 --  * (Bool, Bool): If left and right children is regular(have the right black height).
 --  * (RBTree a, Bool): Fixuped Red Black Tree, and if is regular
