@@ -36,6 +36,7 @@ dependencies:
   - vector
   - zlib >= 0.6 && < 1
   - haskeline
+  - stm >= 2.5 && < 3
 
 library:
   source-dirs: src

@@ -87,6 +87,7 @@ library
       RealWorldHaskell.CH24.Compressor
       RealWorldHaskell.CH24.LockHierarchy
       RealWorldHaskell.CH24.NiceFork
+      RealWorldHaskell.CH28.GameInventory
       Set
       Stack
       Tree
@@ -109,6 +110,7 @@ library
     , random >=1.1 && <2
     , regex-compat >=0.95 && <1
     , regex-posix >=0.96 && <1
+    , stm >=2.5 && <3
     , text ==1.2.4.1
     , time >=1.9 && <2
     , vector
@@ -136,6 +138,7 @@ executable haskell-exe
     , random >=1.1 && <2
     , regex-compat >=0.95 && <1
     , regex-posix >=0.96 && <1
+    , stm >=2.5 && <3
     , text ==1.2.4.1
     , time >=1.9 && <2
     , vector
@@ -164,6 +167,7 @@ test-suite haskell-test
     , random >=1.1 && <2
     , regex-compat >=0.95 && <1
     , regex-posix >=0.96 && <1
+    , stm >=2.5 && <3
     , text ==1.2.4.1
     , time >=1.9 && <2
     , vector
