@@ -5,7 +5,7 @@ module Compiler.Production where
 
 import Control.Monad.Writer
 import Data.Char (isLower, isSpace, isUpper)
-import Data.List (intersperse, nub)
+import Data.List (insert, intersperse, nub)
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Prelude hiding (head)
@@ -109,6 +109,14 @@ psL = map read ["E -> T", "T -> E"]
 sym :: String -> Symbol
 sym = read
 
+(??) :: Maybe a -> Maybe a -> Maybe a
+Just a ?? _ = Just a
+Nothing ?? x = x
+
+just :: Maybe a -> a
+just (Just x) = x
+just Nothing = error "not just value"
+
 (&&&) :: (t -> Bool) -> (t -> Bool) -> t -> Bool
 f &&& g = \x -> f x && g x
 
@@ -134,13 +142,35 @@ nullables ps = M.toList $ _nullables initial
 firsts :: [Production] -> [(Symbol, [Symbol])]
 firsts ps = map (\(k, v) -> (k, S.toList v)) $ M.toList $ _firsts initial
   where
-    initial = M.fromList $ map (,S.empty) $ nub $ map head ps
+    initial = M.empty
 
-    _firsts m = initial
+    nulls = map fst $ filter snd $ nullables ps
+
+    prefixes [] = []
+    prefixes (x : xs) =
+      if elem x nulls
+        then x : prefixes xs
+        else [x]
+
+    _firsts m =
+      let newM = foldl steper m ps
+       in if newM == m
+            then newM
+            else _firsts newM
+
+    steper m (Production h bs) =
+      let s = foldl S.union S.empty $ map firstOf $ prefixes bs
+       in case M.lookup h m of
+            Nothing -> M.insert h s m
+            Just s' -> M.insert h (S.union s' s) m
+      where
+        firstOf Empty = S.empty
+        firstOf (Term x) = S.singleton (Term x)
+        firstOf noTerm = just $ (M.lookup noTerm m) ?? Just S.empty
 
 follows :: [Production] -> [(Symbol, [Symbol])]
 follows ps = map (\(k, v) -> (k, S.toList v)) $ M.toList $ _follows initial
   where
-    initial = M.fromList $ map (,S.empty) $ nub $ map head ps
+    initial = M.empty
 
     _follows m = initial
