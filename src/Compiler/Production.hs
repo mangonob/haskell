@@ -1,9 +1,11 @@
+{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE ViewPatterns #-}
 
 module Compiler.Production where
 
+import Control.Monad.Writer
 import Data.Char (isLower, isSpace, isUpper)
-import Data.List (intersperse)
+import Data.List (intersperse, nub)
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Prelude hiding (head)
@@ -74,8 +76,8 @@ main = do
   input <- getContents
   putStrLn $ show $ createProductions input
 
-productionsExample :: [Production]
-productionsExample =
+ps1 :: [Production]
+ps1 =
   map
     read
     [ "Z -> d",
@@ -86,33 +88,59 @@ productionsExample =
       "X -> a"
     ]
 
-mapForProductions :: [Production] -> M.Map Symbol [Production]
-mapForProductions [] = M.empty
-mapForProductions (p@(Production hs bs) : xs) =
-  let m = mapForProductions xs
-   in case M.lookup hs m of
-        Just ps -> M.insert hs (p : ps) m
-        Nothing -> M.insert hs [p] m
+psE :: [Production]
+psE =
+  map
+    read
+    [ "E -> E + T",
+      "E -> E - T",
+      "E -> T",
+      "T -> T * F",
+      "T -> T / F",
+      "T -> F",
+      "F -> ( E )",
+      "F -> id",
+      "F -> num"
+    ]
 
-just :: Maybe p -> p
-just (Just a) = a
-just Nothing = error "no value"
+psL :: [Production]
+psL = map read ["E -> T", "T -> E"]
+
+sym :: String -> Symbol
+sym = read
 
 (&&&) :: (t -> Bool) -> (t -> Bool) -> t -> Bool
 f &&& g = \x -> f x && g x
 
-nullable :: [Production] -> Symbol -> Bool
-nullable _ Empty = True
-nullable _ (Term _) = False
-nullable ps s =
-  any (all ((/= s) &&& nullable ps)) $ map body $ just $ M.lookup s pMaps
+nullables :: [Production] -> [(Symbol, Bool)]
+nullables ps = M.toList $ _nullables initial
   where
-    pMaps = mapForProductions ps
+    initial = M.fromList $ map (,False) $ nub $ map head ps
 
-first :: [Production] -> Symbol -> [Symbol]
-first _ Empty = []
-first _ (Term s) = [Term s]
-first (p : ps) (NoTerm s) = undefined
+    _nullables m =
+      let newM = foldl steper m ps
+       in if newM == m
+            then newM
+            else _nullables newM
 
-follow :: [Production] -> Symbol -> [Symbol]
-follow = undefined
+    steper m (Production h bs)
+      | all isNullable bs = M.insert h True m
+      | otherwise = m
+      where
+        isNullable Empty = True
+        isNullable (Term x) = False
+        isNullable noTermS = M.lookup noTermS m == Just True
+
+firsts :: [Production] -> [(Symbol, [Symbol])]
+firsts ps = map (\(k, v) -> (k, S.toList v)) $ M.toList $ _firsts initial
+  where
+    initial = M.fromList $ map (,S.empty) $ nub $ map head ps
+
+    _firsts m = initial
+
+follows :: [Production] -> [(Symbol, [Symbol])]
+follows ps = map (\(k, v) -> (k, S.toList v)) $ M.toList $ _follows initial
+  where
+    initial = M.fromList $ map (,S.empty) $ nub $ map head ps
+
+    _follows m = initial
