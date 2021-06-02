@@ -7,6 +7,7 @@ module Utils
     noImplemented,
     readLine,
     time,
+    success,
   )
 where
 
@@ -40,3 +41,7 @@ just Nothing = error "not just value"
 
 readLine :: String -> IO (Maybe String)
 readLine xs = runInputT defaultSettings $ getInputLine xs
+
+success :: Maybe a -> Bool
+success (Just _) = True
+success Nothing = False

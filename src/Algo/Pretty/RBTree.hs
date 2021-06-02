@@ -2,8 +2,14 @@
 
 module Algo.Pretty.RBTree (PrettyRBTree (..)) where
 
-import Algo.Data.RBTree
+import Algo.Data.RBTree (Color (..), RBTree (Empty, Node))
 import Data.Aeson
+  ( KeyValue ((.=)),
+    ToJSON (toJSON),
+    Value (Null),
+    encode,
+    object,
+  )
 import Data.ByteString.Lazy.Char8 (unpack)
 
 newtype PrettyRBTree a = PrettyRBTree {getRBTree :: RBTree a}

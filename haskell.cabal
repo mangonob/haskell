@@ -26,7 +26,10 @@ source-repository head
 library
   exposed-modules:
       Algo
+      Algo.Data.Graph
+      Algo.Data.Matrix
       Algo.Data.RBTree
+      Algo.Graph
       Algo.NumberTheory
       Algo.Pretty
       Algo.Pretty.RBTree
