@@ -43,7 +43,7 @@ lexer x@(takeT -> Just (num, xs)) = NumTk num : lexer xs
 lexer (x : xs) = error $ "bad token " ++ show x
 
 -- Parser
-data Factor = Num Double | Int Int | Expr Expr deriving (Show)
+data Factor = Num Double | Int Int | Expr Expr | UMinus Factor deriving (Show)
 
 data Term = Mul Term Factor | Div Term Factor | Factor Factor deriving (Show)
 
@@ -66,6 +66,7 @@ instance Eval Factor where
   eval (Num num) = num
   eval (Int i) = fromIntegral i
   eval (Expr e) = eval e
+  eval (UMinus e) = - (eval e)
 
 lookAhead :: State [Token] Token
 lookAhead = do
@@ -122,6 +123,7 @@ factor = do
   case la of
     NumTk num -> eat >> return (Num num)
     IntTk i -> eat >> return (Int i)
+    Minus -> eat >> factor >>= return . UMinus
     ParenthesLeft -> do
       eat
       ep <- expr
