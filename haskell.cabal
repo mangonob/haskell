@@ -35,8 +35,8 @@ library
       Algo.Pretty.RBTree
       Compiler
       Compiler.Data.Graph
+      Compiler.Expr
       Compiler.Production
-      Compiler.Simple
       Compiler.StraightLine
       Compiler.Swift
       Compiler.Tiger.Lexer
@@ -50,7 +50,6 @@ library
       JSONParser
       Lib
       Others.AIAudit
-      Parser
       Prob
       RealWorldHaskell.CH03.AlgebraicVector
       RealWorldHaskell.CH03.BookStore
