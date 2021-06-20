@@ -37,10 +37,16 @@ library
       Compiler.Data.Graph
       Compiler.Expr
       Compiler.Production
+      Compiler.Regex
       Compiler.StraightLine
       Compiler.Swift
+      Compiler.Tiger.AbSyn
       Compiler.Tiger.Lexer
       Compiler.Tiger.Parser
+      Compiler.Tiger.Semantic
+      Compiler.Tiger.Semantic.Environment
+      Compiler.Tiger.Semantic.SymTable
+      Compiler.Tiger.Symbol
       Crypt.CaesarCipher
       Crypt.Prime
       Crypt.RSA
