@@ -1,59 +1,17 @@
 {-# LANGUAGE ViewPatterns #-}
 
-module Compiler.Tiger.Lexer (Token (..), Pos (..), lexer) where
+module Compiler.Tiger.Lexer
+  ( Token (..),
+    Pos (..),
+    lexer,
+  )
+where
 
-import Control.Monad.State (MonadState (put), State, get, runState)
+import Compiler.Tiger.Token
+import Control.Monad (guard)
+import Control.Monad.State (MonadState (put), State, evalState, get)
 import Data.Char (isAlpha, isAlphaNum, isNumber, isSpace)
-
-data Pos = Pos {position :: !Int, row :: !Int, column :: !Int} deriving (Eq)
-
-instance Show Pos where
-  show (Pos pos row col) = show (pos, row, col)
-
-data Token
-  = While Pos
-  | For Pos
-  | To Pos
-  | Break Pos
-  | Let Pos
-  | In Pos
-  | End Pos
-  | Function Pos
-  | Var Pos
-  | Type Pos
-  | Array Pos
-  | If Pos
-  | Then Pos
-  | Else Pos
-  | Do Pos
-  | Of Pos
-  | Nil Pos
-  | Comma Pos
-  | Colon Pos
-  | Semicolon Pos
-  | LeftParen Pos
-  | RightParen Pos
-  | LeftBrace Pos
-  | RightBrace Pos
-  | Dot Pos
-  | Plus Pos
-  | Minus Pos
-  | Times Pos
-  | Divide Pos
-  | Eq Pos
-  | NotEq Pos
-  | Lt Pos
-  | Le Pos
-  | Gt Pos
-  | Ge Pos
-  | And Pos
-  | Or Pos
-  | Assign Pos
-  | String String
-  | Int Int Pos
-  | ID String Pos
-  | EOF Pos
-  deriving (Show, Eq)
+import Data.Maybe (fromMaybe)
 
 newLine :: State Pos ()
 newLine = get >>= \(Pos p r c) -> put (Pos (p + 1) (r + 1) 1)
@@ -83,23 +41,23 @@ lexer_ [] = return []
 lexer_ (((== '\n') -> True) : xs) = newLine >> lexer_ xs
 lexer_ ((isSpace -> True) : xs) = next >> lexer_ xs
 -- Reverse
-lexer_ (startWith "while" -> Just xs) = jump 5 While $ lexer_ xs
-lexer_ (startWith "for" -> Just xs) = jump 3 For $ lexer_ xs
-lexer_ (startWith "to" -> Just xs) = jump 2 To $ lexer_ xs
-lexer_ (startWith "break" -> Just xs) = jump 5 Break $ lexer_ xs
-lexer_ (startWith "let" -> Just xs) = jump 3 Let $ lexer_ xs
-lexer_ (startWith "in" -> Just xs) = jump 2 In $ lexer_ xs
-lexer_ (startWith "end" -> Just xs) = jump 3 End $ lexer_ xs
-lexer_ (startWith "function" -> Just xs) = jump 7 Function $ lexer_ xs
-lexer_ (startWith "var" -> Just xs) = jump 3 Var $ lexer_ xs
-lexer_ (startWith "type" -> Just xs) = jump 4 Type $ lexer_ xs
-lexer_ (startWith "array" -> Just xs) = jump 5 Array $ lexer_ xs
-lexer_ (startWith "if" -> Just xs) = jump 2 If $ lexer_ xs
-lexer_ (startWith "then" -> Just xs) = jump 4 Then $ lexer_ xs
-lexer_ (startWith "else" -> Just xs) = jump 4 Else $ lexer_ xs
-lexer_ (startWith "do" -> Just xs) = jump 2 Do $ lexer_ xs
-lexer_ (startWith "of" -> Just xs) = jump 2 Of $ lexer_ xs
-lexer_ (startWith "nil" -> Just xs) = jump 3 Nil $ lexer_ xs
+lexer_ (keyword "while" -> Just xs) = jump 5 While $ lexer_ xs
+lexer_ (keyword "for" -> Just xs) = jump 3 For $ lexer_ xs
+lexer_ (keyword "to" -> Just xs) = jump 2 To $ lexer_ xs
+lexer_ (keyword "break" -> Just xs) = jump 5 Break $ lexer_ xs
+lexer_ (keyword "let" -> Just xs) = jump 3 Let $ lexer_ xs
+lexer_ (keyword "in" -> Just xs) = jump 2 In $ lexer_ xs
+lexer_ (keyword "end" -> Just xs) = jump 3 End $ lexer_ xs
+lexer_ (keyword "function" -> Just xs) = jump 7 Function $ lexer_ xs
+lexer_ (keyword "var" -> Just xs) = jump 3 Var $ lexer_ xs
+lexer_ (keyword "type" -> Just xs) = jump 4 Type $ lexer_ xs
+lexer_ (keyword "array" -> Just xs) = jump 5 Array $ lexer_ xs
+lexer_ (keyword "if" -> Just xs) = jump 2 If $ lexer_ xs
+lexer_ (keyword "then" -> Just xs) = jump 4 Then $ lexer_ xs
+lexer_ (keyword "else" -> Just xs) = jump 4 Else $ lexer_ xs
+lexer_ (keyword "do" -> Just xs) = jump 2 Do $ lexer_ xs
+lexer_ (keyword "of" -> Just xs) = jump 2 Of $ lexer_ xs
+lexer_ (keyword "nil" -> Just xs) = jump 3 Nil $ lexer_ xs
 -- Punctuation symbol
 lexer_ (startWith ":=" -> Just xs) = jump 2 Assign $ lexer_ xs
 lexer_ (startWith "," -> Just xs) = go Comma $lexer_ xs
@@ -107,8 +65,10 @@ lexer_ (startWith ":" -> Just xs) = go Colon $ lexer_ xs
 lexer_ (startWith ";" -> Just xs) = go Semicolon $ lexer_ xs
 lexer_ (startWith "(" -> Just xs) = go LeftParen $ lexer_ xs
 lexer_ (startWith ")" -> Just xs) = go RightParen $ lexer_ xs
-lexer_ (startWith "[" -> Just xs) = go LeftBrace $ lexer_ xs
-lexer_ (startWith "]" -> Just xs) = go RightBrace $ lexer_ xs
+lexer_ (startWith "{" -> Just xs) = go LeftBrace $ lexer_ xs
+lexer_ (startWith "}" -> Just xs) = go RightBrace $ lexer_ xs
+lexer_ (startWith "[" -> Just xs) = go LeftBracket $ lexer_ xs
+lexer_ (startWith "]" -> Just xs) = go RightBracket $ lexer_ xs
 lexer_ (startWith "." -> Just xs) = go Dot $ lexer_ xs
 lexer_ (startWith "+" -> Just xs) = go Plus $ lexer_ xs
 lexer_ (startWith "-" -> Just xs) = go Minus $ lexer_ xs
@@ -127,10 +87,11 @@ lexer_ (startWith ">" -> Just xs) = go Gt $ lexer_ xs
 lexer_ (startWith "&" -> Just xs) = go And $ lexer_ xs
 lexer_ (startWith "|" -> Just xs) = go Or $ lexer_ xs
 lexer_ (startWith "\"" -> Just xs) = do
+  pos <- get
   next
   (str, ys) <- takeString xs
   oth <- lexer_ ys
-  return (String str : oth)
+  return (String str pos : oth)
 lexer_ (x@(isAlpha -> True) : xs) = let (tl, ys) = span isAlphaNum_ xs in jump (length tl + 1) (ID (x : tl)) $ lexer_ ys
   where
     isAlphaNum_ c = isAlphaNum c || c == '_'
@@ -138,7 +99,7 @@ lexer_ (x@(isNumber -> True) : xs) = let (tl, ys) = span isNumber xs in jump (le
 lexer_ xs = get >>= let (w, ws) = break isSpace xs in bad w
 
 lexer :: [Char] -> [Token]
-lexer xs = fst $ runState (lexer_ xs) (Pos 0 1 1)
+lexer xs = evalState (lexer_ xs) (Pos 0 1 1)
 
 startWith :: [Char] -> [Char] -> Maybe [Char]
 startWith "" x = Just x
@@ -146,6 +107,12 @@ startWith _ "" = Nothing
 startWith (x : xs) (y : ys)
   | x == y = startWith xs ys
   | otherwise = Nothing
+
+keyword :: [Char] -> [Char] -> Maybe [Char]
+keyword k s = do
+  result <- startWith k s
+  guard $ null result || (isSpace) (head result)
+  return result
 
 bad :: Show a => a -> Pos -> b
 bad a (Pos _ r c) = error $ "bad character(s) " ++ show a ++ " at row: " ++ show r ++ " column: " ++ show c
@@ -167,7 +134,7 @@ takeString ('\\' : x : xs) = do
   next
   (s, ys) <- takeString xs
   pos <- get
-  let ch = maybe (bad x pos) id (escape x)
+  let ch = fromMaybe (bad x pos) (escape x)
   next
   return (ch : s, ys)
   where
