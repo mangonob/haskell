@@ -37,6 +37,7 @@ dependencies:
   - zlib >= 0.6 && < 1
   - haskeline
   - stm >= 2.5 && < 3
+  - array >= 0.5.4.0 && < 1
 
 library:
   source-dirs: src

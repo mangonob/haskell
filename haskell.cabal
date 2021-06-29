@@ -36,6 +36,9 @@ library
       Compiler
       Compiler.Data.Graph
       Compiler.Expr
+      Compiler.JSON.Lexer
+      Compiler.JSON.Main
+      Compiler.JSON.Token
       Compiler.Production
       Compiler.Regex
       Compiler.StraightLine
@@ -110,6 +113,7 @@ library
       src
   build-depends:
       aeson ==1.5.6.0
+    , array >=0.5.4.0 && <1
     , base >=4.11 && <5
     , bytestring >=0.10 && <1
     , containers >=0.6 && <1
@@ -137,6 +141,7 @@ executable itool
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson ==1.5.6.0
+    , array >=0.5.4.0 && <1
     , base >=4.11 && <5
     , bytestring >=0.10 && <1
     , containers >=0.6 && <1
@@ -166,6 +171,7 @@ test-suite haskell-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson ==1.5.6.0
+    , array >=0.5.4.0 && <1
     , base >=4.11 && <5
     , bytestring >=0.10 && <1
     , containers >=0.6 && <1

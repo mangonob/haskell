@@ -1,0 +1,22 @@
+{
+  "isFavorite": true,
+  "title": "T1",
+  "age": 16,
+  "height": 173.6,
+  "children": [
+    {
+      "isFavorite": false,
+      "title": "T1-1",
+      "children": null,
+      "age": 18,
+      "height": 172.0
+    },
+    {
+      "isFavorite": true,
+      "title": "T1-2",
+      "children": [{}],
+      "age": 6,
+      "height": 136
+    }
+  ]
+}
