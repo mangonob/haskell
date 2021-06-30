@@ -36,8 +36,10 @@ library
       Compiler
       Compiler.Data.Graph
       Compiler.Expr
+      Compiler.JSON.AbSyn
       Compiler.JSON.Lexer
       Compiler.JSON.Main
+      Compiler.JSON.Parser
       Compiler.JSON.Token
       Compiler.Production
       Compiler.Regex

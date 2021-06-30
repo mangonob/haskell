@@ -7,4 +7,4 @@ main :: IO ()
 main = do
   (filename : _) <- getArgs
   contents <- readFile filename
-  putStrLn $ show $ lexer contents
+  print $ lexer contents

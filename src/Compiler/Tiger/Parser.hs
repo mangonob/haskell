@@ -3,9 +3,8 @@
 module Compiler.Tiger.Parser where
 
 import qualified Compiler.Tiger.AbSyn as A
-import Compiler.Tiger.Lexer
 import Compiler.Tiger.Symbol (Sym)
-import Compiler.Tiger.Token (matched)
+import Compiler.Tiger.Token
 import Control.Monad.State (MonadState (get, put), State, evalState, gets, runState)
 import Data.Functor.Identity (Identity)
 
