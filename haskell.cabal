@@ -45,7 +45,6 @@ library
       Compiler.JSON.Main
       Compiler.JSON.Parser
       Compiler.JSON.Token
-      Compiler.JSON.XML
       Compiler.Production
       Compiler.Regex
       Compiler.StraightLine
