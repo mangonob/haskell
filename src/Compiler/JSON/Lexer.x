@@ -22,8 +22,6 @@ true                      {tokenWith (return True) Bool}
 false                     {tokenWith (return False) Bool}
 null                      {token Null}
 
-"("                       {token LeftParen}
-")"                       {token LeftParen}
 "["                       {token LeftBracket}
 "]"                       {token RightBracket}
 "{"                       {token LeftBrace}
