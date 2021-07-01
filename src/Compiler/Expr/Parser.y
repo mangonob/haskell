@@ -6,7 +6,8 @@ import Compiler.Expr.Lexer (lexer)
 import Control.Monad.State (MonadState (get, put), State, evalState)
 }
 
-%name calc
+%name parser
+%monad { Environment }
 %tokentype { Token }
 %error { parseError }
 
@@ -30,49 +31,36 @@ var             { Var $$ }
 
 %%
 
-program:        expr                            { evalState $1 [] }
+program:        expr                            { $1 }
 
-expr :: { ExprState }
+expr :: { Int }
 expr:           '(' expr ')'                    { $2 }
 |               let in expr                     { $3 }
-|               let decs in expr                { $2 >> $4 }
-|               expr '+' expr                   { apply (+) $1 $3 }
-|               expr '-' expr                   { apply (-) $1 $3 }
-|               expr '*' expr                   { apply (*) $1 $3 }
-|               expr '/' expr                   { apply div $1 $3 }
-|               int                             { return $1 }
-|               '-' expr %prec UMINUS           { do
-                                                    v <- $2
-                                                    return (-v) }
-|               var                             { readV $1 }
+|               let decs in expr                { seq $2 $4 }
+|               expr '+' expr                   { $1 +  $3 }
+|               expr '-' expr                   { $1 - $3 }
+|               expr '*' expr                   { $1 *  $3 }
+|               expr '/' expr                   { $1 `div` $3 }
+|               int                             { $1 }
+|               '-' expr %prec UMINUS           { (- $2) }
+|               var                             {% do
+                                                   env <- get
+                                                   case lookup $1 env of
+                                                     Just v -> return v
+                                                     Nothing -> error $ "undefined var " ++ $1 }
 
+decs :: { () }
 decs:           dec                             { $1 }
-|               decs dec                        { $2 >> $1 }
+|               decs dec                        { seq $2 $1 }
 
-dec:            var '=' expr                    { addV $1 $3 }
+dec :: { () }
+dec:            var '=' expr                    {% do
+                                                     env <- get 
+                                                     put (($1, $3) : env) }
 
 {
-parseError :: [Token] -> a
+parseError :: [Token] -> Environment a
 parseError = undefined
 
-type ExprState = State [(String, Int)] Int
-
-apply :: (Int -> Int -> Int) -> ExprState -> ExprState -> ExprState
-apply f s1 s2 = do
-  e1 <- s1
-  e2 <- s2
-  return (f e1 e2)
-
-addV :: String -> ExprState -> State [(String, Int)] ()
-addV v expr = do
-  exp <- expr
-  env <- get
-  put ((v, exp) : env)
-
-readV :: String -> ExprState
-readV v = do
-  env <- get
-  case lookup v env of
-    Just value -> return value
-    Nothing -> error $ "undefined var " ++ v
+type Environment = State [(String, Int)]
 }

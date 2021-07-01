@@ -11,13 +11,12 @@ import Control.Monad (ap)
 
 -- parser produced by Happy Version 1.20.0
 
-data HappyAbsSyn t4 t6 t7
+data HappyAbsSyn t4
 	= HappyTerminal (Token)
 	| HappyErrorToken Prelude.Int
 	| HappyAbsSyn4 t4
-	| HappyAbsSyn5 (ExprState)
-	| HappyAbsSyn6 t6
-	| HappyAbsSyn7 t7
+	| HappyAbsSyn5 (Int)
+	| HappyAbsSyn6 (())
 
 happyExpList :: Happy_Data_Array.Array Prelude.Int Prelude.Int
 happyExpList = Happy_Data_Array.listArray (0,48) ([9856,13313,9,60,10,0,0,39424,53252,36,0,6016,0,2560,0,16384,147,32,9424,9856,13313,40969,73,0,0,24576,0,53251,36,0,0,18848,0,0,0,120,0
@@ -26,7 +25,7 @@ happyExpList = Happy_Data_Array.listArray (0,48) ([9856,13313,9,60,10,0,0,39424,
 {-# NOINLINE happyExpListPerState #-}
 happyExpListPerState st =
     token_strs_expected
-  where token_strs = ["error","%dummy","%start_calc","program","expr","decs","dec","let","in","int","var","'='","'+'","'-'","'*'","'/'","'('","')'","%eof"]
+  where token_strs = ["error","%dummy","%start_parser","program","expr","decs","dec","let","in","int","var","'='","'+'","'-'","'*'","'/'","'('","')'","%eof"]
         bit_start = st Prelude.* 19
         bit_end = (st Prelude.+ 1) Prelude.* 19
         read_bit = readArrayBit happyExpList
@@ -192,7 +191,7 @@ action_29 _ = happyReduce_14
 happyReduce_1 = happySpecReduce_1  4 happyReduction_1
 happyReduction_1 (HappyAbsSyn5  happy_var_1)
 	 =  HappyAbsSyn4
-		 (evalState happy_var_1 []
+		 (happy_var_1
 	)
 happyReduction_1 _  = notHappyAtAll 
 
@@ -221,7 +220,7 @@ happyReduction_4 ((HappyAbsSyn5  happy_var_4) `HappyStk`
 	_ `HappyStk`
 	happyRest)
 	 = HappyAbsSyn5
-		 (happy_var_2 >> happy_var_4
+		 (seq happy_var_2 happy_var_4
 	) `HappyStk` happyRest
 
 happyReduce_5 = happySpecReduce_3  5 happyReduction_5
@@ -229,7 +228,7 @@ happyReduction_5 (HappyAbsSyn5  happy_var_3)
 	_
 	(HappyAbsSyn5  happy_var_1)
 	 =  HappyAbsSyn5
-		 (apply (+) happy_var_1 happy_var_3
+		 (happy_var_1 +  happy_var_3
 	)
 happyReduction_5 _ _ _  = notHappyAtAll 
 
@@ -238,7 +237,7 @@ happyReduction_6 (HappyAbsSyn5  happy_var_3)
 	_
 	(HappyAbsSyn5  happy_var_1)
 	 =  HappyAbsSyn5
-		 (apply (-) happy_var_1 happy_var_3
+		 (happy_var_1 - happy_var_3
 	)
 happyReduction_6 _ _ _  = notHappyAtAll 
 
@@ -247,7 +246,7 @@ happyReduction_7 (HappyAbsSyn5  happy_var_3)
 	_
 	(HappyAbsSyn5  happy_var_1)
 	 =  HappyAbsSyn5
-		 (apply (*) happy_var_1 happy_var_3
+		 (happy_var_1 *  happy_var_3
 	)
 happyReduction_7 _ _ _  = notHappyAtAll 
 
@@ -256,14 +255,14 @@ happyReduction_8 (HappyAbsSyn5  happy_var_3)
 	_
 	(HappyAbsSyn5  happy_var_1)
 	 =  HappyAbsSyn5
-		 (apply div happy_var_1 happy_var_3
+		 (happy_var_1 `div` happy_var_3
 	)
 happyReduction_8 _ _ _  = notHappyAtAll 
 
 happyReduce_9 = happySpecReduce_1  5 happyReduction_9
 happyReduction_9 (HappyTerminal (Int happy_var_1))
 	 =  HappyAbsSyn5
-		 (return happy_var_1
+		 (happy_var_1
 	)
 happyReduction_9 _  = notHappyAtAll 
 
@@ -271,42 +270,44 @@ happyReduce_10 = happySpecReduce_2  5 happyReduction_10
 happyReduction_10 (HappyAbsSyn5  happy_var_2)
 	_
 	 =  HappyAbsSyn5
-		 (do
-                                                    v <- happy_var_2
-                                                    return (-v)
+		 ((- happy_var_2)
 	)
 happyReduction_10 _ _  = notHappyAtAll 
 
-happyReduce_11 = happySpecReduce_1  5 happyReduction_11
-happyReduction_11 (HappyTerminal (Var happy_var_1))
-	 =  HappyAbsSyn5
-		 (readV happy_var_1
-	)
-happyReduction_11 _  = notHappyAtAll 
+happyReduce_11 = happyMonadReduce 1 5 happyReduction_11
+happyReduction_11 ((HappyTerminal (Var happy_var_1)) `HappyStk`
+	happyRest) tk
+	 = happyThen ((( do
+                                                   env <- get
+                                                   case lookup happy_var_1 env of
+                                                     Just v -> return v
+                                                     Nothing -> error $ "undefined var " ++ happy_var_1))
+	) (\r -> happyReturn (HappyAbsSyn5 r))
 
 happyReduce_12 = happySpecReduce_1  6 happyReduction_12
-happyReduction_12 (HappyAbsSyn7  happy_var_1)
+happyReduction_12 (HappyAbsSyn6  happy_var_1)
 	 =  HappyAbsSyn6
 		 (happy_var_1
 	)
 happyReduction_12 _  = notHappyAtAll 
 
 happyReduce_13 = happySpecReduce_2  6 happyReduction_13
-happyReduction_13 (HappyAbsSyn7  happy_var_2)
+happyReduction_13 (HappyAbsSyn6  happy_var_2)
 	(HappyAbsSyn6  happy_var_1)
 	 =  HappyAbsSyn6
-		 (happy_var_2 >> happy_var_1
+		 (seq happy_var_2 happy_var_1
 	)
 happyReduction_13 _ _  = notHappyAtAll 
 
-happyReduce_14 = happySpecReduce_3  7 happyReduction_14
-happyReduction_14 (HappyAbsSyn5  happy_var_3)
-	_
-	(HappyTerminal (Var happy_var_1))
-	 =  HappyAbsSyn7
-		 (addV happy_var_1 happy_var_3
-	)
-happyReduction_14 _ _ _  = notHappyAtAll 
+happyReduce_14 = happyMonadReduce 3 7 happyReduction_14
+happyReduction_14 ((HappyAbsSyn5  happy_var_3) `HappyStk`
+	_ `HappyStk`
+	(HappyTerminal (Var happy_var_1)) `HappyStk`
+	happyRest) tk
+	 = happyThen ((( do
+                                                     env <- get 
+                                                     put ((happy_var_1, happy_var_3) : env)))
+	) (\r -> happyReturn (HappyAbsSyn6 r))
 
 happyNewToken action sts stk [] =
 	action 19 19 notHappyAtAll (HappyState action) sts stk []
@@ -331,58 +332,25 @@ happyNewToken action sts stk (tk:tks) =
 happyError_ explist 19 tk tks = happyError' (tks, explist)
 happyError_ explist _ tk tks = happyError' ((tk:tks), explist)
 
-newtype HappyIdentity a = HappyIdentity a
-happyIdentity = HappyIdentity
-happyRunIdentity (HappyIdentity a) = a
-
-instance Prelude.Functor HappyIdentity where
-    fmap f (HappyIdentity a) = HappyIdentity (f a)
-
-instance Applicative HappyIdentity where
-    pure  = HappyIdentity
-    (<*>) = ap
-instance Prelude.Monad HappyIdentity where
-    return = pure
-    (HappyIdentity p) >>= q = q p
-
-happyThen :: () => HappyIdentity a -> (a -> HappyIdentity b) -> HappyIdentity b
+happyThen :: () => Environment a -> (a -> Environment b) -> Environment b
 happyThen = (Prelude.>>=)
-happyReturn :: () => a -> HappyIdentity a
+happyReturn :: () => a -> Environment a
 happyReturn = (Prelude.return)
 happyThen1 m k tks = (Prelude.>>=) m (\a -> k a tks)
-happyReturn1 :: () => a -> b -> HappyIdentity a
+happyReturn1 :: () => a -> b -> Environment a
 happyReturn1 = \a tks -> (Prelude.return) a
-happyError' :: () => ([(Token)], [Prelude.String]) -> HappyIdentity a
-happyError' = HappyIdentity Prelude.. (\(tokens, _) -> parseError tokens)
-calc tks = happyRunIdentity happySomeParser where
+happyError' :: () => ([(Token)], [Prelude.String]) -> Environment a
+happyError' = (\(tokens, _) -> parseError tokens)
+parser tks = happySomeParser where
  happySomeParser = happyThen (happyParse action_0 tks) (\x -> case x of {HappyAbsSyn4 z -> happyReturn z; _other -> notHappyAtAll })
 
 happySeq = happyDontSeq
 
 
-parseError :: [Token] -> a
+parseError :: [Token] -> Environment a
 parseError = undefined
 
-type ExprState = State [(String, Int)] Int
-
-apply :: (Int -> Int -> Int) -> ExprState -> ExprState -> ExprState
-apply f s1 s2 = do
-  e1 <- s1
-  e2 <- s2
-  return (f e1 e2)
-
-addV :: String -> ExprState -> State [(String, Int)] ()
-addV v expr = do
-  exp <- expr
-  env <- get
-  put ((v, exp) : env)
-
-readV :: String -> ExprState
-readV v = do
-  env <- get
-  case lookup v env of
-    Just value -> return value
-    Nothing -> error $ "undefined var " ++ v
+type Environment = State [(String, Int)]
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- $Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp $
 
