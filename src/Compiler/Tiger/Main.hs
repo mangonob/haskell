@@ -1,7 +1,7 @@
 module Compiler.Tiger.Main where
 
-import Compiler.Tiger.Lexer (lexer)
-import Compiler.Tiger.Parser (parser)
+import Compiler.Tiger.Lexer_ (lexer)
+import Compiler.Tiger.Parser_ (parser)
 import Compiler.Tiger.Raw (raw)
 import System.Environment (getArgs)
 
@@ -14,7 +14,7 @@ main = do
       putStrLn $ raw . parser $ lexer contents
     (filename : _) -> do
       contents <- readFile filename
-      print . parser $ lexer contents
+      print $ lexer contents
     _ ->
       putStrLn $
         unlines
