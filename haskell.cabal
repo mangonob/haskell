@@ -37,7 +37,6 @@ library
       Compiler.Data.Graph
       Compiler.Expr.AbSyn
       Compiler.Expr.Lexer
-      Compiler.Expr.Main
       Compiler.Expr.Parser
       Compiler.Expr.Token
       Compiler.JSON.AbSyn
