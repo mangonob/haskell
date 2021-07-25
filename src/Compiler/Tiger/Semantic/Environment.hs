@@ -1,8 +1,6 @@
 module Compiler.Tiger.Semantic.Environment where
 
-data Environment = Environment
-  { -- | Type Environment
-    typeEnv :: Int,
-    -- | Variable Environment
-    varEnv :: Int
-  }
+import Compiler.Tiger.Symbol (Sym)
+import Data.Map (Map)
+
+type Table = Map Sym

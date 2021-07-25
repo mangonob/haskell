@@ -54,7 +54,7 @@ library
       Compiler.Tiger.Raw
       Compiler.Tiger.Semantic
       Compiler.Tiger.Semantic.Environment
-      Compiler.Tiger.Semantic.SymTable
+      Compiler.Tiger.Semantic.Types
       Compiler.Tiger.Symbol
       Compiler.Tiger.Token
       Crypt.CaesarCipher
