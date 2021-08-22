@@ -52,8 +52,8 @@ library
       Compiler.Tiger.Parser
       Compiler.Tiger.Parser_
       Compiler.Tiger.Raw
-      Compiler.Tiger.Semantic.Environment
       Compiler.Tiger.Semantic.Semantic
+      Compiler.Tiger.Semantic.STable
       Compiler.Tiger.Semantic.Types
       Compiler.Tiger.Symbol
       Compiler.Tiger.Token
