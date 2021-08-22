@@ -52,8 +52,8 @@ library
       Compiler.Tiger.Parser
       Compiler.Tiger.Parser_
       Compiler.Tiger.Raw
-      Compiler.Tiger.Semantic
       Compiler.Tiger.Semantic.Environment
+      Compiler.Tiger.Semantic.Semantic
       Compiler.Tiger.Semantic.Types
       Compiler.Tiger.Symbol
       Compiler.Tiger.Token
@@ -65,6 +65,7 @@ library
       JList
       Lib
       Others.AIAudit
+      Playground
       Prob
       RealWorldHaskell.CH03.AlgebraicVector
       RealWorldHaskell.CH03.BookStore
