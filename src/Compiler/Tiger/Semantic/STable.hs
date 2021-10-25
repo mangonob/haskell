@@ -6,7 +6,7 @@ import Compiler.Tiger.Semantic.Types
 import Compiler.Tiger.Symbol (Sym)
 import qualified Data.Map as Map
 import Data.Maybe (Maybe (Just, Nothing))
-import Prelude (Show, error, ($))
+import Prelude hiding (lookup)
 
 type Table a = Map.Map Sym a
 
