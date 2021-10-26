@@ -1317,18 +1317,19 @@ happyReduction_6 (HappyAbsSyn5  happy_var_3)
 happyReduction_6 _ _ _  = notHappyAtAll 
 
 happyReduce_7 = happySpecReduce_2  5 happyReduction_7
-happyReduction_7 _
+happyReduction_7 (HappyTerminal happy_var_2)
 	_
 	 =  HappyAbsSyn5
-		 (A.SeqExpr []
+		 (A.SeqExpr [] (pos happy_var_2)
 	)
+happyReduction_7 _ _  = notHappyAtAll 
 
 happyReduce_8 = happySpecReduce_3  5 happyReduction_8
-happyReduction_8 _
+happyReduction_8 (HappyTerminal happy_var_3)
 	(HappyAbsSyn8  happy_var_2)
 	_
 	 =  HappyAbsSyn5
-		 (A.SeqExpr happy_var_2
+		 (A.SeqExpr happy_var_2 (pos happy_var_3)
 	)
 happyReduction_8 _ _ _  = notHappyAtAll 
 
@@ -1552,24 +1553,24 @@ happyReduction_31 (HappyTerminal happy_var_1)
 happyReduction_31 _  = notHappyAtAll 
 
 happyReduce_32 = happyReduce 4 5 happyReduction_32
-happyReduction_32 (_ `HappyStk`
+happyReduction_32 ((HappyTerminal happy_var_4) `HappyStk`
 	_ `HappyStk`
 	(HappyAbsSyn12  happy_var_2) `HappyStk`
 	(HappyTerminal happy_var_1) `HappyStk`
 	happyRest)
 	 = HappyAbsSyn5
-		 (A.LetExpr happy_var_2 (A.SeqExpr []) (pos happy_var_1)
+		 (A.LetExpr happy_var_2 (A.SeqExpr [] (pos happy_var_4)) (pos happy_var_1)
 	) `HappyStk` happyRest
 
 happyReduce_33 = happyReduce 5 5 happyReduction_33
-happyReduction_33 (_ `HappyStk`
+happyReduction_33 ((HappyTerminal happy_var_5) `HappyStk`
 	(HappyAbsSyn8  happy_var_4) `HappyStk`
 	_ `HappyStk`
 	(HappyAbsSyn12  happy_var_2) `HappyStk`
 	(HappyTerminal happy_var_1) `HappyStk`
 	happyRest)
 	 = HappyAbsSyn5
-		 (A.LetExpr happy_var_2 (A.SeqExpr happy_var_4) (pos happy_var_1)
+		 (A.LetExpr happy_var_2 (A.SeqExpr happy_var_4 (pos happy_var_5)) (pos happy_var_1)
 	) `HappyStk` happyRest
 
 happyReduce_34 = happySpecReduce_1  6 happyReduction_34

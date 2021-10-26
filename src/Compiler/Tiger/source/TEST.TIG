@@ -1,0 +1,8 @@
+let 
+  type a = list
+  type b = a
+  type list = { first: int, rest: list }
+  var list := b { first = 42, rest = nil}
+in
+  list
+end

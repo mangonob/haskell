@@ -10,7 +10,7 @@ class Raw r where
 instance Raw Expr where
   raw (VarExpr v) = raw v
   raw (NilExpr _) = "nil"
-  raw (SeqExpr eprs) =
+  raw (SeqExpr eprs _) =
     let seqs = joined "; \n" $ map raw eprs
      in if length eprs == 1
           then raw (head eprs)

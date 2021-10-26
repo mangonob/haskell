@@ -8,7 +8,7 @@ import Compiler.Tiger.Token (Pos (Pos))
 data Expr
   = VarExpr Var
   | NilExpr Pos
-  | SeqExpr [Expr]
+  | SeqExpr [Expr] Pos
   | IntExpr Int Pos
   | StringExpr String Pos
   | UMinus Expr Pos
@@ -65,3 +65,26 @@ zero = IntExpr 0 (Pos 0 0 0)
 
 one :: Expr
 one = IntExpr 1 (Pos 0 0 0)
+
+exprPos :: Expr -> Pos
+exprPos (VarExpr v) = varPos v
+exprPos (NilExpr p) = p
+exprPos (SeqExpr _ p) = p
+exprPos (IntExpr _ p) = p
+exprPos (StringExpr _ p) = p
+exprPos (UMinus _ p) = p
+exprPos Call {call_pos = p} = p
+exprPos (OpExpr _ _ _ p) = p
+exprPos RecordsExpr {records_pos = p} = p
+exprPos ArrayExpr {array_pos = p} = p
+exprPos (AssignExpr _ _ p) = p
+exprPos IFExpr {if_pos = p} = p
+exprPos WhileExpr {while_pos = p} = p
+exprPos ForExpr {for_pos = p} = p
+exprPos (BreakExpr p) = p
+exprPos LetExpr {let_pos = p} = p
+
+varPos :: Var -> Pos
+varPos (SimpleVar _ p) = p
+varPos (FieldVar _ _ p) = p
+varPos (IndexedVar _ _ p) = p

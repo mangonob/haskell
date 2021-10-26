@@ -75,8 +75,8 @@ expr:           int                               { A.IntExpr (i_value $1) (pos 
 |               nil                               { A.NilExpr (pos $1) }
 |               lvalue                            { A.VarExpr $1 }
 |               lvalue ':=' expr                  { A.AssignExpr $1 $3 (pos $2) }
-|               '(' ')'                           { A.SeqExpr [] }
-|               '(' expr_seq ')'                  { A.SeqExpr $2 }
+|               '(' ')'                           { A.SeqExpr [] (pos $2)}
+|               '(' expr_seq ')'                  { A.SeqExpr $2 (pos $3)}
 |               '-' expr %prec UMINUS             { A.UMinus $2 (pos $1)}
 |               id '(' ')'                        { A.Call (id_value $1) [] (pos $1) }
 |               id '(' params ')'                 { A.Call (id_value $1) $3 (pos $1) }
@@ -100,8 +100,8 @@ expr:           int                               { A.IntExpr (i_value $1) (pos 
 |               while expr do expr                { A.WhileExpr $2 $4 (pos $1) }
 |               for id ':=' expr to expr do expr  { A.ForExpr (id_value $2) $4 $6 $8 (pos $1)}
 |               break                             { A.BreakExpr (pos $1) }
-|               let decs in end                   { A.LetExpr $2 (A.SeqExpr []) (pos $1) }
-|               let decs in expr_seq end          { A.LetExpr $2 (A.SeqExpr $4) (pos $1) }
+|               let decs in end                   { A.LetExpr $2 (A.SeqExpr [] (pos $4)) (pos $1) }
+|               let decs in expr_seq end          { A.LetExpr $2 (A.SeqExpr $4 (pos $5)) (pos $1) }
 
 lvalue :: { A.Var }
 lvalue:         id                                { simpleVar $1 }

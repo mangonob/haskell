@@ -451,12 +451,12 @@ seqExpr :: State [Token] A.Expr
 seqExpr = do
   la <- lookAhead
   case la of
-    End _ -> return (A.SeqExpr [])
-    RightParen _ -> return (A.SeqExpr [])
+    End p -> return (A.SeqExpr [] p)
+    RightParen p -> return (A.SeqExpr [] p)
     _ -> do
       epr <- expr
       eprs <- seqExpr' [epr]
-      return $ A.SeqExpr eprs
+      A.SeqExpr eprs . pos <$> lookAhead
 
 seqExpr' :: [A.Expr] -> State [Token] [A.Expr]
 seqExpr' eprs = do
