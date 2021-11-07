@@ -18,7 +18,7 @@ import Compiler.Tiger.Semantic.STable
 import Compiler.Tiger.Semantic.Types
 import qualified Compiler.Tiger.Semantic.Types
 import Compiler.Tiger.Symbol (Sym)
-import Control.Monad.State
+import Control.Monad.State.Strict
 import Data.Char (isSpace)
 import Prelude hiding (lookup)
 

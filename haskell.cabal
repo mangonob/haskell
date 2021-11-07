@@ -46,6 +46,7 @@ library
       Compiler.JSON.Token
       Compiler.Production
       Compiler.Tiger.AbSyn
+      Compiler.Tiger.Frame
       Compiler.Tiger.Lexer
       Compiler.Tiger.Lexer_
       Compiler.Tiger.Main

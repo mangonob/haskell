@@ -15,9 +15,10 @@ import qualified Compiler.Tiger.Semantic.Types as T
 import Compiler.Tiger.Symbol
 import Compiler.Tiger.Token (Pos)
 import Control.Applicative
-import Control.Monad.State
+import Control.Monad.State.Strict
+import Data.Function (on)
 import Data.Functor ((<&>))
-import Data.List (find)
+import Data.List
 
 data Exp = Exp deriving (Show)
 
@@ -60,12 +61,21 @@ transExpr (UMinus exp p) = do
     T.IntType -> return $ ExpTy Nothing v_ty
     _ -> error $ "\"-\" can apply in " ++ show v_ty ++ " type at position " ++ show p
 transExpr (Call func_name args p) = do
-  f_entry <- getVenv func_name
-  case f_entry of
+  fEntry <- getVenv func_name
+  case fEntry of
     Just (FuncEntry farmals return_ty) -> do
-      arg_expTys <- mapM transExpr args
-      let arg_tys = fmap (\(ExpTy _ t) -> t) arg_expTys
-      sequence_ $ checkType <$> ZipList arg_tys <*> ZipList farmals <*> ZipList (fmap exprPos args)
+      argExpTys <- mapM transExpr args
+      let argTys = fmap (\(ExpTy _ t) -> t) argExpTys
+      sequence_ $ checkType <$> ZipList argTys <*> ZipList farmals <*> ZipList (fmap exprPos args)
+      case (compare `on` length) argTys farmals of
+        LT -> do
+          let ty = farmals !! max 0 (length argTys)
+          error $ "excepted " ++ show ty ++ " type arugment at position " ++ show p
+        GT -> do
+          let ty = argTys !! max 0 (length farmals)
+          let arg = args !! max 0 (length farmals)
+          error $ "unexcepted " ++ show ty ++ " type argument at position " ++ show (exprPos arg)
+        EQ -> return ()
       return $ ExpTy Nothing return_ty
     _ -> error $ "undefined function " ++ func_name ++ " at position " ++ show p
 transExpr (OpExpr e1 op e2 p) = do
@@ -181,9 +191,8 @@ transExpr (IFExpr pred succ (Just fail) p) = do
   checkType pTy T.IntType (exprPos pred)
   ExpTy _ sTy <- transExpr succ
   ExpTy _ fTy <- transExpr fail
-  if sTy == fTy
-    then return $ ExpTy Nothing sTy
-    else error $ "else and then statement should have same type at position " ++ show p
+  checkType sTy fTy p
+  return $ ExpTy Nothing sTy
 transExpr (WhileExpr pred body p) = do
   ExpTy _ p_ty <- transExpr pred
   checkType p_ty T.IntType (exprPos pred)
@@ -343,7 +352,7 @@ _run :: String -> (ExpTy, Env)
 _run source = transExpr (parser $ lexer source) `runState` baseEnv
 
 main = do
-  contents <- readFile "src/Compiler/Tiger/source/TEST.TIG"
+  contents <- readFile "src/Compiler/Tiger/source/MERGE.TIG"
   let (value, state) = runState (transExpr $ parser $ lexer contents) baseEnv
   putStrLn "Result: "
   print value
