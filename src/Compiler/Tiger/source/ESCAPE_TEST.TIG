@@ -1,0 +1,10 @@
+let 
+  var a: int := 42
+
+  function foo(b: int, c: int) = let 
+    function bar(d: int) = b + c + d
+  in
+    a + bar(4)
+  end
+in
+end

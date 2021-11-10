@@ -197,7 +197,7 @@ transExpr (WhileExpr pred body p) = do
   ExpTy _ p_ty <- transExpr pred
   checkType p_ty T.IntType (exprPos pred)
   transExpr body
-transExpr (ForExpr v_name from to body p) = do
+transExpr (ForExpr v_name from to body _ p) = do
   ExpTy _ f_ty <- transExpr from
   ExpTy _ t_ty <- transExpr to
   checkType f_ty T.IntType (exprPos from)
@@ -274,11 +274,11 @@ transDec (TypeDec name ty p) = do
   ExpTy _ ty' <- transType ty
   putTenv name ty'
   return $ ExpTy Nothing T.Void
-transDec (VarDec name initial Nothing p) = do
+transDec (VarDec name initial Nothing _ p) = do
   ExpTy _ initialTy <- transExpr initial
   putVenv name (VarEntry initialTy)
   return $ ExpTy Nothing T.Void
-transDec (VarDec name initial (Just typeName) p) = do
+transDec (VarDec name initial (Just typeName) _ p) = do
   maybeEntry <- getTenv typeName
   case maybeEntry of
     Just ty -> do
@@ -307,7 +307,7 @@ transDec (FuncDec name parameters (Just returnTypeName) body p) = do
   return $ ExpTy Nothing T.Void
 
 transRecord :: Record -> State Env T.Type
-transRecord (Record name typeName p) = do
+transRecord (Record name typeName _ p) = do
   ty <- findType typeName p
   putVenv name (VarEntry ty)
   return ty
@@ -324,7 +324,7 @@ transType (Records records p) = do
   return $ ExpTy Nothing (T.RecordType rcds)
   where
     transRecord :: Record -> State Env (Sym, T.Type)
-    transRecord (Record name typeName p) = do
+    transRecord (Record name typeName _ p) = do
       maybeTy <- getTenv typeName
       case maybeTy of
         Just ty -> return (name, ty)

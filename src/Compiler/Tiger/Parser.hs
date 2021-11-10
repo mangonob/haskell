@@ -201,7 +201,7 @@ factor = do
       to <- expr
       match (Do __)
       body <- expr
-      return $ A.ForExpr {A.for_var = v, A.from = from, A.to = to, A.body = body, A.for_pos = p}
+      return $ A.ForExpr {A.for_var = v, A.from = from, A.to = to, A.body = body, A.i_escape = False, A.for_pos = p}
     Break p -> return (A.BreakExpr p)
     LeftParen p -> do
       eat
@@ -296,7 +296,7 @@ varDec = do
             Assign _ -> do
               eat
               value <- expr
-              return A.VarDec {A.var_name = id, A.var_init = value, A.var_type = Nothing, A.var_pos = p}
+              return A.VarDec {A.var_name = id, A.var_init = value, A.var_type = Nothing, A.var_escape = False, A.var_pos = p}
             Colon _ -> do
               eat
               la <- lookAhead
@@ -304,7 +304,7 @@ varDec = do
                 ID type_id _ -> do
                   match (Assign __)
                   value <- expr
-                  return A.VarDec {A.var_name = id, A.var_init = value, A.var_type = Just type_id, A.var_pos = p}
+                  return A.VarDec {A.var_name = id, A.var_init = value, A.var_type = Just type_id, A.var_escape = False, A.var_pos = p}
                 t -> badToken "bad type id" t
             t -> unexceptedToken t
         t -> unexceptedToken t
@@ -407,7 +407,7 @@ record = do
       match (Colon __)
       la <- lookAhead
       case la of
-        ID type_id _ -> eat >> return (A.Record id type_id p)
+        ID type_id _ -> eat >> return (A.Record id type_id False p)
         t -> unexceptedToken t
     t -> unexceptedToken t
 

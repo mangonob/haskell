@@ -46,7 +46,6 @@ library
       Compiler.JSON.Token
       Compiler.Production
       Compiler.Tiger.AbSyn
-      Compiler.Tiger.Frame
       Compiler.Tiger.Lexer
       Compiler.Tiger.Lexer_
       Compiler.Tiger.Main
@@ -54,8 +53,11 @@ library
       Compiler.Tiger.Parser_
       Compiler.Tiger.Raw
       Compiler.Tiger.Semantic.Env
+      Compiler.Tiger.Semantic.FindEscape
+      Compiler.Tiger.Semantic.Frame
       Compiler.Tiger.Semantic.Semantic
       Compiler.Tiger.Semantic.STable
+      Compiler.Tiger.Semantic.Tree
       Compiler.Tiger.Semantic.Types
       Compiler.Tiger.Symbol
       Compiler.Tiger.Token

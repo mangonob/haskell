@@ -31,17 +31,21 @@ instance Raw Expr where
         thenStr = combine (\c -> [headStr, identIfNeeded c, "else"]) (raw suc)
      in combine (\c -> [thenStr, identIfNeeded c]) (raw fai)
   raw (WhileExpr p body _) = "while " ++ raw p ++ " do " ++ raw body
-  raw (ForExpr v from to body _) = "for " ++ v ++ " := " ++ raw from ++ " to " ++ raw to ++ " do " ++ raw body
+  raw (ForExpr v from to body escape _) = "for " ++ escaped escape v ++ " := " ++ raw from ++ " to " ++ raw to ++ " do " ++ raw body
   raw (BreakExpr _) = "break"
   raw (LetExpr decs body _) =
     let headStr = combine (\c -> ["let", identIfNeeded c, "in"]) (unlines (map raw decs))
      in combine (\c -> [headStr, identIfNeeded c, "end"]) (raw body)
 
+escaped :: Bool -> String -> String
+escaped True s = "<escaped> " ++ s
+escaped False s = s
+
 joined :: String -> [String] -> String
 joined sep xs = join $ intersperse sep xs
 
 identation :: String -> String
-identation = unlines . map ("|..." ++) . lines
+identation = unlines . map ("|   " ++) . lines
 
 isMultiLine :: String -> Bool
 isMultiLine = (> 1) . length . lines
@@ -84,8 +88,8 @@ instance Raw Field where
 
 instance Raw Dec where
   raw (TypeDec n t _) = "type " ++ n ++ " = " ++ raw t
-  raw (VarDec n v Nothing _) = "var " ++ n ++ " := " ++ raw v
-  raw (VarDec n v (Just t) _) = "var " ++ n ++ ": " ++ t ++ " := " ++ raw v
+  raw (VarDec n v Nothing escape _) = "var " ++ escaped escape n ++ " := " ++ raw v
+  raw (VarDec n v (Just t) escape _) = "var " ++ escaped escape n ++ ": " ++ t ++ " := " ++ raw v
   raw (FuncDec n args Nothing bd _) =
     let argsStr = join (intersperse ", " (map raw args))
         headStr = combine' (\c -> ["function " ++ n ++ "(", c, ") ="]) argsStr
@@ -101,7 +105,7 @@ instance Raw Type where
   raw (Array s _) = "array of" ++ s
 
 instance Raw Record where
-  raw (Record s t _) = s ++ ": " ++ t
+  raw (Record s t escape _) = escaped escape s ++ ": " ++ t
 
 instance Raw Operator where
   raw PlusOp = "+"

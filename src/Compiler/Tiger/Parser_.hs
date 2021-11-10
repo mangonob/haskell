@@ -1542,7 +1542,7 @@ happyReduction_30 ((HappyAbsSyn5  happy_var_8) `HappyStk`
 	(HappyTerminal happy_var_1) `HappyStk`
 	happyRest)
 	 = HappyAbsSyn5
-		 (A.ForExpr (id_value happy_var_2) happy_var_4 happy_var_6 happy_var_8 (pos happy_var_1)
+		 (A.ForExpr (id_value happy_var_2) happy_var_4 happy_var_6 happy_var_8 False (pos happy_var_1)
 	) `HappyStk` happyRest
 
 happyReduce_31 = happySpecReduce_1  5 happyReduction_31
@@ -1712,7 +1712,7 @@ happyReduction_50 ((HappyAbsSyn5  happy_var_4) `HappyStk`
 	(HappyTerminal happy_var_1) `HappyStk`
 	happyRest)
 	 = HappyAbsSyn13
-		 (A.VarDec (id_value happy_var_2) happy_var_4 Nothing (pos happy_var_1)
+		 (A.VarDec (id_value happy_var_2) happy_var_4 Nothing False (pos happy_var_1)
 	) `HappyStk` happyRest
 
 happyReduce_51 = happyReduce 6 13 happyReduction_51
@@ -1724,7 +1724,7 @@ happyReduction_51 ((HappyAbsSyn5  happy_var_6) `HappyStk`
 	(HappyTerminal happy_var_1) `HappyStk`
 	happyRest)
 	 = HappyAbsSyn13
-		 (A.VarDec (id_value happy_var_2) happy_var_6 (Just (id_value happy_var_4)) (pos happy_var_1)
+		 (A.VarDec (id_value happy_var_2) happy_var_6 (Just (id_value happy_var_4)) False (pos happy_var_1)
 	) `HappyStk` happyRest
 
 happyReduce_52 = happyReduce 7 13 happyReduction_52
@@ -1813,7 +1813,7 @@ happyReduction_61 (HappyAbsSyn18  happy_var_3)
 	_
 	(HappyTerminal happy_var_1)
 	 =  HappyAbsSyn17
-		 (A.Record (id_value happy_var_1) (id_value happy_var_3) (pos happy_var_1)
+		 (A.Record (id_value happy_var_1) (id_value happy_var_3) False (pos happy_var_1)
 	)
 happyReduction_61 _ _ _  = notHappyAtAll 
 

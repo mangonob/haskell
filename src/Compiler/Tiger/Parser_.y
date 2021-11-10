@@ -98,7 +98,7 @@ expr:           int                               { A.IntExpr (i_value $1) (pos 
 |               if expr then expr %prec do        { A.IFExpr $2 $4 Nothing (pos $1) }
 |               if expr then expr else expr       { A.IFExpr $2 $4 (Just $6) (pos $1) }
 |               while expr do expr                { A.WhileExpr $2 $4 (pos $1) }
-|               for id ':=' expr to expr do expr  { A.ForExpr (id_value $2) $4 $6 $8 (pos $1)}
+|               for id ':=' expr to expr do expr  { A.ForExpr (id_value $2) $4 $6 $8 False (pos $1)}
 |               break                             { A.BreakExpr (pos $1) }
 |               let decs in end                   { A.LetExpr $2 (A.SeqExpr [] (pos $4)) (pos $1) }
 |               let decs in expr_seq end          { A.LetExpr $2 (A.SeqExpr $4 (pos $5)) (pos $1) }
@@ -135,8 +135,8 @@ decs:           decs dec          { $1 ++ [$2] }
 
 dec :: { A.Dec }
 dec:            type id '=' ty                                { A.TypeDec (id_value $2) $4 (pos $1)}
-|               var id ':=' expr                              { A.VarDec (id_value $2) $4 Nothing (pos $1)}
-|               var id ':' type_id ':=' expr                  { A.VarDec (id_value $2) $6 (Just (id_value $4)) (pos $1)}
+|               var id ':=' expr                              { A.VarDec (id_value $2) $4 Nothing False (pos $1)}
+|               var id ':' type_id ':=' expr                  { A.VarDec (id_value $2) $6 (Just (id_value $4)) False (pos $1)}
 |               function id '(' ty_fields ')' '=' expr       { A.FuncDec (id_value $2) $4 Nothing $7 (pos $1)} 
 |               function id '(' ty_fields ')' 
                   ':' type_id '=' expr                       { A.FuncDec (id_value $2) $4 (Just (id_value $7)) $9 (pos $1)}
@@ -155,7 +155,7 @@ ty_fields_:     ty_field                      { [$1] }
 |               ty_fields_ ',' ty_field       { $1 ++ [$3] }
 
 ty_field :: { A.Record }
-ty_field:       id ':' type_id                { A.Record (id_value $1) (id_value $3) (pos $1) }
+ty_field:       id ':' type_id                { A.Record (id_value $1) (id_value $3) False (pos $1) }
 
 type_id :: { Token }
 type_id:        id                            { $1 }

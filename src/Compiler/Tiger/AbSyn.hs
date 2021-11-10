@@ -3,8 +3,6 @@ module Compiler.Tiger.AbSyn where
 import Compiler.Tiger.Symbol (Sym)
 import Compiler.Tiger.Token (Pos (Pos))
 
-{- -}
-
 data Expr
   = VarExpr Var
   | NilExpr Pos
@@ -19,7 +17,14 @@ data Expr
   | AssignExpr Var Expr Pos
   | IFExpr {predicate :: Expr, success :: Expr, failure :: Maybe Expr, if_pos :: Pos}
   | WhileExpr {predicate :: Expr, body :: Expr, while_pos :: Pos}
-  | ForExpr {for_var :: Sym, from :: Expr, to :: Expr, body :: Expr, for_pos :: Pos}
+  | ForExpr
+      { for_var :: Sym,
+        from :: Expr,
+        to :: Expr,
+        body :: Expr,
+        i_escape :: Bool,
+        for_pos :: Pos
+      }
   | BreakExpr Pos
   | LetExpr {decs :: [Dec], body :: Expr, let_pos :: Pos}
   deriving (Show)
@@ -28,8 +33,20 @@ data Field = Field {field_name :: Sym, field_value :: Expr, field_pos :: Pos} de
 
 data Dec
   = TypeDec {type_name :: Sym, alias :: Type, type_pos :: Pos}
-  | VarDec {var_name :: Sym, var_init :: Expr, var_type :: Maybe Sym, var_pos :: Pos}
-  | FuncDec {func_name :: Sym, parameters :: [Record], returnType :: Maybe Sym, func_body :: Expr, func_pos :: Pos}
+  | VarDec
+      { var_name :: Sym,
+        var_init :: Expr,
+        var_type :: Maybe Sym,
+        var_escape :: Bool,
+        var_pos :: Pos
+      }
+  | FuncDec
+      { func_name :: Sym,
+        parameters :: [Record],
+        returnType :: Maybe Sym,
+        func_body :: Expr,
+        func_pos :: Pos
+      }
   deriving (Show)
 
 data Type
@@ -38,7 +55,7 @@ data Type
   | Array Sym Pos
   deriving (Show)
 
-data Record = Record {record_name :: Sym, record_type :: Sym, record_pos :: Pos} deriving (Show)
+data Record = Record {record_name :: Sym, record_type :: Sym, record_escape :: Bool, record_pos :: Pos} deriving (Show)
 
 data Operator
   = PlusOp
