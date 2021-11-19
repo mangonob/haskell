@@ -57,6 +57,7 @@ library
       Compiler.Tiger.Semantic.Frame
       Compiler.Tiger.Semantic.Semantic
       Compiler.Tiger.Semantic.STable
+      Compiler.Tiger.Semantic.Temp
       Compiler.Tiger.Semantic.Tree
       Compiler.Tiger.Semantic.Types
       Compiler.Tiger.Symbol
