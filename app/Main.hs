@@ -108,3 +108,12 @@ data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Show, Eq)
 instance Foldable Tree where
   foldMap f Empty = mempty
   foldMap f (Node x l r) = foldMap f l `mappend` f x `mappend` foldMap f r
+
+firstIndex :: (Num p, Eq t) => t -> [t] -> p
+firstIndex _ [] = -1
+firstIndex x (y : xs)
+  | x == y = 0
+  | otherwise = 1 + firstIndex x xs
+
+onlyUpper :: [Char] -> [Char]
+onlyUpper xs = [x | x <- xs, x `elem` ['A' .. 'Z']]

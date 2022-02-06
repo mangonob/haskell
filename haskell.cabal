@@ -55,9 +55,11 @@ library
       Compiler.Tiger.Semantic.Env
       Compiler.Tiger.Semantic.FindEscape
       Compiler.Tiger.Semantic.Frame
+      Compiler.Tiger.Semantic.NASMFrame
       Compiler.Tiger.Semantic.Semantic
       Compiler.Tiger.Semantic.STable
       Compiler.Tiger.Semantic.Temp
+      Compiler.Tiger.Semantic.Translate
       Compiler.Tiger.Semantic.Tree
       Compiler.Tiger.Semantic.Types
       Compiler.Tiger.Symbol
