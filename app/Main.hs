@@ -3,6 +3,7 @@ module Main where
 import Control.Applicative
 import Control.Exception (catch)
 import Control.Monad (forever, when)
+import Control.Monad.State
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Lazy as B
 import Data.Function (on)
@@ -117,3 +118,14 @@ firstIndex x (y : xs)
 
 onlyUpper :: [Char] -> [Char]
 onlyUpper xs = [x | x <- xs, x `elem` ['A' .. 'Z']]
+
+collatz :: Int -> State [Int] Int
+collatz 1 = return 1
+collatz x
+  | even x = record >> collatz (x `div` 2)
+  | otherwise = record >> collatz (x * 3 + 1)
+  where
+    record :: State [Int] ()
+    record = do
+      path <- get
+      put (x : path)
