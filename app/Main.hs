@@ -4,6 +4,7 @@ import Control.Applicative
 import Control.Exception (catch)
 import Control.Monad (forever, when)
 import Control.Monad.State
+import Data.Bits
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Lazy as B
 import Data.Function (on)
@@ -129,3 +130,29 @@ collatz x
     record = do
       path <- get
       put (x : path)
+
+data Range = Range {lower :: Int, upper :: Int} deriving (Eq)
+
+instance Show Range where
+  show (Range l u) = "(" ++ show l ++ " .. " ++ show u ++ ")"
+
+splitRange :: Range -> [Range]
+splitRange (Range a b)
+  | b <= a = []
+  | b == a + 1 = [Range a b]
+  | isPower (b - a) && a `mod` (b - a) == 0 = [Range a b]
+  | otherwise =
+    let r = (b - 1) `div` slot * slot
+     in splitRange (Range a r) ++ splitRange (Range r b)
+  where
+    isPower x = x .&. (x - 1) == 0
+
+    highestBit 0 = 0
+    highestBit x = 1 + highestBit (x `shiftR` 1)
+
+    slot = bit (highestBit (b - a) - 1) :: Int
+
+testSplitRange :: IO ()
+testSplitRange =
+  let ranges = fmap (\x -> Range x (x + 3000)) [1000 .. 2000]
+   in mapM_ print (fmap splitRange ranges)
