@@ -120,13 +120,13 @@ firstIndex x (y : xs)
 onlyUpper :: [Char] -> [Char]
 onlyUpper xs = [x | x <- xs, x `elem` ['A' .. 'Z']]
 
-collatz :: Int -> State [Int] Int
+collatz :: Integer -> State [Integer] Integer
 collatz 1 = return 1
 collatz x
   | even x = record >> collatz (x `div` 2)
   | otherwise = record >> collatz (x * 3 + 1)
   where
-    record :: State [Int] ()
+    record :: State [Integer] ()
     record = do
       path <- get
       put (x : path)
