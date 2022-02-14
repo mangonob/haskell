@@ -156,3 +156,6 @@ testSplitRange :: IO ()
 testSplitRange =
   let ranges = fmap (\x -> Range x (x + 3000)) [1000 .. 2000]
    in mapM_ print (fmap splitRange ranges)
+
+sequenceA' :: Applicative f => [f a] -> f [a]
+sequenceA' = foldr (liftA2 (:)) (pure [])
