@@ -111,6 +111,21 @@ instance Foldable Tree where
   foldMap f Empty = mempty
   foldMap f (Node x l r) = foldMap f l `mappend` f x `mappend` foldMap f r
 
+testTree :: Tree Integer
+testTree =
+  Node
+    5
+    ( Node
+        3
+        (Node 1 Empty Empty)
+        (Node 6 Empty Empty)
+    )
+    ( Node
+        9
+        (Node 8 Empty Empty)
+        (Node 10 Empty Empty)
+    )
+
 firstIndex :: (Num p, Eq t) => t -> [t] -> p
 firstIndex _ [] = -1
 firstIndex x (y : xs)
