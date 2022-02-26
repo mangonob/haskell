@@ -3,12 +3,12 @@ module Crypt.Prime (isPrime, modPow) where
 depart :: (Num a, Integral b) => b -> (a, b)
 depart n
   | n <= 0 = error "Depart a nopositive number"
-  | mod n 2 == 0 = let (s, t) = depart $ div n 2 in (s + 1, t)
+  | even n = let (s, t) = depart $ div n 2 in (s + 1, t)
   | otherwise = (0, n)
 
 isPrime :: Integer -> Bool
 isPrime x
-  | x < 30 = elem x primer
+  | x < 30 = x `elem` primer
   | otherwise = and $ millerRobin <$> primer <*> pure x
 
 millerRobin :: Integral a => a -> a -> Bool
@@ -26,7 +26,7 @@ modPow n 0 x = 1
 modPow n 1 x = mod x n
 modPow n p x
   | x > n = modPow n p (mod' n x)
-  | mod p 2 == 0 = mod' n $ modPow n (div p 2) (x * x)
+  | even p = mod' n $ modPow n (div p 2) (x * x)
   | otherwise = mod' n $ x * modPow n (div p 2) (x * x)
 
 primer :: [Integer]
