@@ -174,3 +174,26 @@ testSplitRange =
 
 sequenceA' :: Applicative f => [f a] -> f [a]
 sequenceA' = foldr (liftA2 (:)) (pure [])
+
+type Birds = Int
+
+type Pole = (Birds, Birds)
+
+landLeft :: Birds -> Pole -> Maybe Pole
+landLeft a (l, r)
+  | abs ((l + a) - r) > 4 = Nothing
+  | otherwise = Just (l + a, r)
+
+landRight :: Birds -> Pole -> Maybe Pole
+landRight a (l, r)
+  | abs (l - (r + a)) > 4 = Nothing
+  | otherwise = Just (l, r + a)
+
+banana :: Pole -> Maybe Pole
+banana _ = Nothing
+
+optionalChain :: Maybe Integer
+optionalChain = do
+  x <- Just 3
+  y <- Just 4
+  return $ x * y
