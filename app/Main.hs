@@ -4,6 +4,7 @@ import Control.Applicative
 import Control.Exception (catch)
 import Control.Monad (forever, when)
 import Control.Monad.State
+import Control.Monad.Writer (Writer)
 import Data.Bits
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Lazy as B
@@ -197,3 +198,16 @@ optionalChain = do
   x <- Just 3
   y <- Just 4
   return $ x * y
+
+newtype Logger m a = Logger {runLogger :: (a, m)}
+
+instance Functor (Logger m) where
+  fmap f (Logger (a, b)) = Logger (f a, b)
+
+instance (Monoid m) => Applicative (Logger m) where
+  pure x = Logger (x, mempty)
+  Logger (f, l) <*> Logger (a, _) = Logger (f a, l)
+
+instance (Monoid m) => Monad (Logger m) where
+  return x = Logger (x, mempty)
+  Logger (a, l) >>= f = let Logger (b, l') = f a in Logger (b, l `mappend` l')
