@@ -4,7 +4,7 @@ import Control.Applicative
 import Control.Exception (catch)
 import Control.Monad (forever, when)
 import Control.Monad.State
-import Control.Monad.Writer (Writer)
+import Control.Monad.Writer (MonadWriter (tell, writer), Writer, runWriter)
 import Data.Bits
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Lazy as B
@@ -199,15 +199,27 @@ optionalChain = do
   y <- Just 4
   return $ x * y
 
-newtype Logger m a = Logger {runLogger :: (a, m)}
+-- Logger monad like Writer
+newtype Logger m a = Logger {runLogger :: (a, m)} deriving (Show)
 
 instance Functor (Logger m) where
   fmap f (Logger (a, b)) = Logger (f a, b)
 
 instance (Monoid m) => Applicative (Logger m) where
   pure x = Logger (x, mempty)
-  Logger (f, l) <*> Logger (a, _) = Logger (f a, l)
+  Logger (f, l) <*> Logger (a, l') = Logger (f a, l `mappend` l')
 
 instance (Monoid m) => Monad (Logger m) where
   return x = Logger (x, mempty)
   Logger (a, l) >>= f = let Logger (b, l') = f a in Logger (b, l `mappend` l')
+
+logger :: (Monoid m) => m -> Logger m ()
+logger v = Logger ((), v)
+
+gcd' :: (Show t, Integral t) => t -> t -> Logger [[Char]] t
+gcd' a 0 = do
+  logger [show a]
+  return a
+gcd' a b = do
+  logger ["gcd " ++ show a ++ " " ++ show b ++ " -> "]
+  gcd' b (a `mod` b)
