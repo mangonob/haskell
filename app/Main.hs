@@ -8,6 +8,7 @@ import Control.Monad.Writer (MonadWriter (tell, writer), Writer, runWriter)
 import Data.Bits
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Lazy as B
+import Data.DList (DList, fromList, toList)
 import Data.Function (on)
 import Data.Monoid
 import qualified Data.String as B
@@ -216,10 +217,16 @@ instance (Monoid m) => Monad (Logger m) where
 logger :: (Monoid m) => m -> Logger m ()
 logger v = Logger ((), v)
 
-gcd' :: (Show t, Integral t) => t -> t -> Logger [[Char]] t
+gcd' :: (Show t, Integral t) => t -> t -> Logger (DList String) t
 gcd' a 0 = do
-  logger [show a]
+  logger $ fromList [show a]
   return a
 gcd' a b = do
-  logger ["gcd " ++ show a ++ " " ++ show b ++ " -> "]
+  logger $ fromList ["gcd " ++ show a ++ " " ++ show b ++ " -> "]
   gcd' b (a `mod` b)
+
+readM :: Int -> Int
+readM = do
+  a <- (* 2)
+  b <- (+ 10)
+  return (a + b)
