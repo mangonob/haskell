@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+
 module Main where
 
 import Control.Applicative
@@ -236,3 +238,35 @@ push x = get >>= \xs -> put (x : xs)
 
 pop :: State [a] a
 pop = get >>= \(x : xs) -> put xs >> return x
+
+-- Monad like state
+newtype Slave s a = Slave {runSlave :: s -> (s, a)}
+
+instance Functor (Slave s) where
+  fmap f (Slave sl) = Slave (\s -> let (newState, a) = sl s in (newState, f a))
+
+instance Applicative (Slave s) where
+  pure x = Slave (,x)
+  Slave sf <*> Slave sv = Slave $ \s ->
+    let (newState, newF) = sf s
+        (newState', v) = sv s
+     in (newState', newF v)
+
+instance Monad (Slave s) where
+  return = pure
+  Slave sf >>= f = Slave $ \s ->
+    let (newState, v) = sf s
+        Slave sf' = f v
+     in sf' newState
+
+getSlave :: Slave s s
+getSlave = Slave (\s -> (s, s))
+
+setSlave :: s -> Slave s ()
+setSlave newState = Slave (const (newState, ()))
+
+slavePush :: a -> Slave [a] ()
+slavePush x = getSlave >>= \xs -> setSlave (x : xs)
+
+slavePop :: Slave [a] a
+slavePop = getSlave >>= \(x : xs) -> setSlave xs >> return x
