@@ -230,3 +230,9 @@ readM = do
   a <- (* 2)
   b <- (+ 10)
   return (a + b)
+
+push :: a -> State [a] ()
+push x = get >>= \xs -> put (x : xs)
+
+pop :: State [a] a
+pop = get >>= \(x : xs) -> put xs >> return x
