@@ -268,5 +268,9 @@ setSlave newState = Slave (const (newState, ()))
 slavePush :: a -> Slave [a] ()
 slavePush x = getSlave >>= \xs -> setSlave (x : xs)
 
-slavePop :: Slave [a] a
-slavePop = getSlave >>= \(x : xs) -> setSlave xs >> return x
+slavePop :: Slave [a] (Maybe a)
+slavePop = do
+  xs <- getSlave
+  if null xs
+    then return Nothing
+    else setSlave (tail xs) >> return (Just (head xs))
