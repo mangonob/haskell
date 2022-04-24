@@ -274,3 +274,14 @@ slavePop = do
   if null xs
     then return Nothing
     else setSlave (tail xs) >> return (Just (head xs))
+
+nCoins :: Int -> State StdGen [Bool]
+nCoins n =
+  if n <= 0
+    then return []
+    else do
+      gen <- get
+      let (coin, ng) = random gen
+      put ng
+      cs <- nCoins (n - 1)
+      return (coin : cs)
