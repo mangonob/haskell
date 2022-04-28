@@ -14,7 +14,9 @@ import Data.DList (DList, fromList, toList)
 import Data.Function (on)
 import Data.Monoid
 import qualified Data.String as B
+import Data.Vector.Fusion.Bundle.Size (lowerBound)
 import GHC.Base (Applicative)
+import GHC.Enum (Bounded)
 import System.Directory (doesFileExist)
 import System.Environment (getArgs)
 import System.IO.Error (ioeGetFileName)
@@ -285,3 +287,35 @@ nCoins n =
       put ng
       cs <- nCoins (n - 1)
       return (coin : cs)
+
+-- ❌
+-- Right 3 >>= \x -> return (x + 1)
+-- ✅
+-- Right 3 >>= \x -> return (x + 1) :: Either String Int
+
+join' :: Monad m => m (m b) -> m b
+join' mm = mm >>= id
+
+t :: Num a => a -> Maybe a
+t x = Just (x + 1)
+
+ascend :: Ord a => [a] -> Bool
+ascend [] = True
+ascend [x] = True
+ascend (x : y : xs) = x <= y && ascend (y : xs)
+
+-- solve RPN deal with exception
+solveRPN' :: String -> Maybe Double
+solveRPN' = fmap head . foldM foldingFunction [] . words
+
+foldingFunction :: [Double] -> String -> Maybe [Double]
+foldingFunction (x : y : xs) "*" = return ((x * y) : xs)
+foldingFunction (x : y : xs) "/" = return ((x / y) : xs)
+foldingFunction (x : y : xs) "+" = return ((x + y) : xs)
+foldingFunction (x : y : xs) "-" = return ((x * y) : xs)
+foldingFunction xs numberString = fmap (: xs) (readMaybe numberString)
+
+readMaybe :: (Read a) => String -> Maybe a
+readMaybe st = case reads st of
+  [(x, "")] -> Just x
+  _ -> Nothing
