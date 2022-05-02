@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.34.3.
 --
 -- see: https://github.com/sol/hpack
 
@@ -29,10 +29,12 @@ library
       Algo.Data.Graph
       Algo.Data.Matrix
       Algo.Data.RBTree
+      Algo.DivideAndConquer.DivideAndConquer
       Algo.Graph
       Algo.NumberTheory
       Algo.Pretty
       Algo.Pretty.RBTree
+      Algo.Sort.Sort
       Compiler
       Compiler.Data.Graph
       Compiler.Expr.AbSyn
