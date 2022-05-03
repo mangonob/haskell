@@ -28,10 +28,13 @@ library
       Algo
       Algo.Data.Graph
       Algo.Data.HashTable
+      Algo.Data.Link
       Algo.Data.Matrix
       Algo.Data.RBTree
       Algo.Data.Tree
       Algo.DivideAndConquer.DivideAndConquer
+      Algo.DynamicProgramming.CutRod
+      Algo.DynamicProgramming.DynamicProgramming
       Algo.Graph
       Algo.NumberTheory
       Algo.Pretty

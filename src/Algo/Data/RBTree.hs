@@ -18,13 +18,15 @@ data RBTree a
 singleton :: a -> RBTree a
 singleton x = Node Black x Empty Empty
 
+to :: Color -> RBTree a -> RBTree a
+to _ Empty = Empty
+to c (Node _ x l r) = Node c x l r
+
 red :: RBTree a -> RBTree a
-red Empty = Empty
-red (Node _ x l r) = Node Red x l r
+red = to Red
 
 black :: RBTree a -> RBTree a
-black Empty = Empty
-black (Node _ x l r) = Node Black x l r
+black = to Black
 
 isRed :: RBTree a -> Bool
 isRed Empty = False
@@ -39,12 +41,11 @@ insert :: Ord a => a -> RBTree a -> RBTree a
 insert x t = black $ _insert x t
 
 _insert :: Ord a => a -> RBTree a -> RBTree a
-_insert x Empty = red $ singleton x
+_insert x Empty = red (singleton x)
 _insert x t@(Node c y l r)
-  | x == y = t
   | x < y = insertFixup $ Node c y (_insert x l) r
   | x > y = insertFixup $ Node c y l (_insert x r)
-  | otherwise = undefined
+  | otherwise = t
 
 insertFixup :: RBTree a -> RBTree a
 insertFixup (Node Black x l r)
@@ -57,33 +58,26 @@ insertFixup x = x
 
 rotateR :: RBTree a -> RBTree a
 rotateR (Node c1 x (Node c2 y l2 r2) r1) = Node c2 y l2 (Node c1 x r2 r1)
-rotateR _ = error "Can't right rotate a node without left child"
+rotateR _ = error "can't right rotate a node without left child"
 
 rotateL :: RBTree a -> RBTree a
 rotateL (Node c1 x l1 (Node c2 y l2 r2)) = Node c2 y (Node c1 x l1 l2) r2
-rotateL _ = error "Can't left rotate a node without right child"
+rotateL _ = error "can't left rotate a node without right child"
 
-blackHeight :: Show a => RBTree a -> Int
+blackHeight :: RBTree a -> Int
 blackHeight Empty = 0
-blackHeight t@(Node Red _ l r) =
+blackHeight t@(Node c _ l r) =
   if blackHeight l == blackHeight r
-    then blackHeight l
-    else error "bad red black tree"
-blackHeight t@(Node Black _ l r) =
-  if blackHeight l == blackHeight r
-    then blackHeight l + 1
-    else error "bad red black tree"
+    then if c == Red then blackHeight l else blackHeight l + 1
+    else undefined
 
 fromList :: Ord a => [a] -> RBTree a
 fromList = foldl (flip insert) Empty
 
-treeMin :: RBTree a -> a
-treeMin (Node _ x Empty _) = x
-treeMin (Node _ x left _) = treeMin left
-
 treeMax :: RBTree a -> a
 treeMax (Node _ x _ Empty) = x
 treeMax (Node _ x _ right) = treeMax right
+treeMax _ = undefined
 
 remove :: Ord a => a -> RBTree a -> RBTree a
 remove x t = fst $ _remove x t
@@ -93,23 +87,20 @@ _remove x Empty = (Empty, True)
 _remove x (Node c y l r)
   | x > y = let (newR, xr) = _remove x r in removeFixup (Node c y l newR) (True, xr)
   | x < y = let (newL, xl) = _remove x l in removeFixup (Node c y newL r) (xl, True)
-  -- x == y
-  | l == Empty && r == Empty = (Empty, c == Red)
-  | l /= Empty =
+  | x == y && l == Empty && r == Empty = (Empty, c == Red)
+  | x == y && l /= Empty =
     let prev = treeMax l
-        (newL, xl) = _removeMax l
+        (newL, xl) = removeMax l
      in removeFixup (Node c prev newL r) (xl, True)
-  | r /= Empty = removeFixup (black r) (True, c == Red || isRed r)
+  | x == y && r /= Empty = removeFixup (black r) (True, c == Red || isRed r)
+  | otherwise = undefined
 
-_removeMax :: RBTree a -> (RBTree a, Bool)
-_removeMax (Node Red _ left Empty) = (black left, True)
-_removeMax (Node Black _ left Empty) = (black left, isRed left)
-_removeMax (Node c x left right) =
-  let (r, rx) = _removeMax right
-   in removeFixup (Node c x left r) (True, rx)
-
-tint :: Color -> RBTree a -> RBTree a
-tint c = if c == Red then red else black
+removeMax :: RBTree a -> (RBTree a, Bool)
+removeMax (Node c _ l Empty) = (l, c == Red)
+removeMax (Node c x l r) =
+  let (r', rx) = removeMax r
+   in removeFixup (Node c x l r') (True, rx)
+removeMax _ = undefined
 
 -- | Parameters
 --  * RBTree a :
@@ -125,7 +116,7 @@ removeFixup p@(Node c x l r) (False, True)
         (newL, xl) = removeFixup yl (False, True)
      in removeFixup (Node cy y newL yr) (xl, True)
   -- right node is black
-  | isRed $ left r = (tint c $ rotateL $ Node Black x l (rotateR r), True)
+  | isRed (left r) = (to c $ rotateL $ Node Black x l (rotateR r), True)
   | otherwise = (rotateL $ Node Red x l r, c == Red)
 removeFixup p@(Node c x l r) (True, False)
   | isRed r = (Node c x l (black r), True)
@@ -134,5 +125,6 @@ removeFixup p@(Node c x l r) (True, False)
         (newR, xr) = removeFixup yr (True, False)
      in removeFixup (Node cy y yl newR) (True, xr)
   -- left node is black
-  | isRed $ right l = (tint c $ rotateR $ Node Black x (rotateL l) r, True)
+  | isRed (right l) = (to c $ rotateR $ Node Black x (rotateL l) r, True)
   | otherwise = (rotateR $ Node Red x l r, c == Red)
+removeFixup _ _ = undefined

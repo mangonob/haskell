@@ -44,5 +44,4 @@ merge (x : xs) (y : ys)
 -- Awesome quick sort
 quickSort :: Ord a => [a] -> [a]
 quickSort [] = []
-quickSort [x] = [x]
 quickSort (x : xs) = quickSort [y | y <- xs, y < x] ++ x : quickSort [y | y <- xs, y >= x]
