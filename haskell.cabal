@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.3.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 
@@ -27,8 +27,10 @@ library
   exposed-modules:
       Algo
       Algo.Data.Graph
+      Algo.Data.HashTable
       Algo.Data.Matrix
       Algo.Data.RBTree
+      Algo.Data.Tree
       Algo.DivideAndConquer.DivideAndConquer
       Algo.Graph
       Algo.NumberTheory
@@ -73,7 +75,6 @@ library
       FS
       JList
       Lib
-      Others.AIAudit
       Playground
       Prob
       RealWorldHaskell.CH03.AlgebraicVector

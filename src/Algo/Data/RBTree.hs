@@ -12,7 +12,7 @@ data Color = Red | Black deriving (Show, Eq)
 
 data RBTree a
   = Empty
-  | Node {color :: Color, value :: a, left :: (RBTree a), right :: (RBTree a)}
+  | Node {color :: Color, value :: a, left :: RBTree a, right :: RBTree a}
   deriving (Show, Eq)
 
 singleton :: a -> RBTree a
@@ -44,6 +44,7 @@ _insert x t@(Node c y l r)
   | x == y = t
   | x < y = insertFixup $ Node c y (_insert x l) r
   | x > y = insertFixup $ Node c y l (_insert x r)
+  | otherwise = undefined
 
 insertFixup :: RBTree a -> RBTree a
 insertFixup (Node Black x l r)
@@ -55,11 +56,11 @@ insertFixup (Node Black x l r)
 insertFixup x = x
 
 rotateR :: RBTree a -> RBTree a
-rotateR (Node c1 x (Node c2 y l2 r2) r1) = (Node c2 y l2 (Node c1 x r2 r1))
+rotateR (Node c1 x (Node c2 y l2 r2) r1) = Node c2 y l2 (Node c1 x r2 r1)
 rotateR _ = error "Can't right rotate a node without left child"
 
 rotateL :: RBTree a -> RBTree a
-rotateL (Node c1 x l1 (Node c2 y l2 r2)) = (Node c2 y (Node c1 x l1 l2) r2)
+rotateL (Node c1 x l1 (Node c2 y l2 r2)) = Node c2 y (Node c1 x l1 l2) r2
 rotateL _ = error "Can't left rotate a node without right child"
 
 blackHeight :: Show a => RBTree a -> Int
@@ -67,16 +68,14 @@ blackHeight Empty = 0
 blackHeight t@(Node Red _ l r) =
   if blackHeight l == blackHeight r
     then blackHeight l
-    else error $ "bad red black tree"
+    else error "bad red black tree"
 blackHeight t@(Node Black _ l r) =
   if blackHeight l == blackHeight r
     then blackHeight l + 1
-    else error $ "bad red black tree"
+    else error "bad red black tree"
 
 fromList :: Ord a => [a] -> RBTree a
-fromList xs = foldl append Empty xs
-  where
-    append t x = insert x t
+fromList = foldl (flip insert) Empty
 
 treeMin :: RBTree a -> a
 treeMin (Node _ x Empty _) = x
