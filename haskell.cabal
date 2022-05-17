@@ -28,7 +28,6 @@ library
       Algo
       Algo.Data.Graph
       Algo.Data.HashTable
-      Algo.Data.Link
       Algo.Data.Matrix
       Algo.Data.RBTree
       Algo.Data.Tree
@@ -138,6 +137,7 @@ library
     , dlist >=0.8 && <1
     , filepath >=1.4 && <2
     , haskeline
+    , monad-memo >=0.5.3 && <0.6
     , mtl >=2.2 && <3
     , random >=1.1 && <2
     , regex-compat >=0.95 && <1
@@ -167,6 +167,7 @@ executable itool
     , filepath >=1.4 && <2
     , haskeline
     , haskell
+    , monad-memo >=0.5.3 && <0.6
     , mtl >=2.2 && <3
     , random >=1.1 && <2
     , regex-compat >=0.95 && <1
@@ -197,6 +198,7 @@ test-suite haskell-test
     , filepath >=1.4 && <2
     , haskeline
     , haskell
+    , monad-memo >=0.5.3 && <0.6
     , mtl >=2.2 && <3
     , random >=1.1 && <2
     , regex-compat >=0.95 && <1

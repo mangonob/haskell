@@ -38,6 +38,7 @@ dependencies:
   - haskeline
   - stm >= 2.5 && < 3
   - array >= 0.5.4.0 && < 1
+  - monad-memo >= 0.5.3 && < 0.6
 
 library:
   source-dirs: src

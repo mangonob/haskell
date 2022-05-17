@@ -1,4 +1,5 @@
-all: install
+all: 
+	stack ghci
 
 install: 
 	stack install
