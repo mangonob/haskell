@@ -4,7 +4,7 @@ import Algo.NumberTheory
 import Crypt.Prime
 import System.Random
 
-data Key = Private Integer Integer | Public Integer Integer deriving (Show)
+data Key = Key Integer Integer deriving (Show)
 
 type KeyPair = (Key, Key)
 
@@ -23,7 +23,7 @@ genKey = do
   let l = lcm (p - 1) (q - 1)
   let (e, genD) = genR (\x -> gcd x l == 1) (2, l - 1) genE
   let (_, d, _) = exGcd e l
-  return (Public n e, Private n (mod (d + l) l))
+  return (Key n e, Key n (mod (d + l) l))
 
 -- Gen prime number in range
 genPrime :: (Integer, Integer) -> StdGen -> (Integer, StdGen)
@@ -38,7 +38,7 @@ genR f bs gen =
         else genR f bs nextGen
 
 encrypt :: Key -> Integer -> Integer
-encrypt (Public n e) x = modPow n e x
+encrypt (Key n e) = modPow n e
 
 decrypt :: Key -> Integer -> Integer
-decrypt (Private n d) x = modPow n d x
+decrypt (Key n d) = modPow n d
