@@ -1,8 +1,11 @@
+{-# LANGUAGE TupleSections #-}
+
 module Crypt.RSA (genKey, encrypt, decrypt) where
 
-import Algo.NumberTheory
-import Crypt.Prime
-import System.Random
+import Algo.NumberTheory (exGcd)
+import Control.Monad (join)
+import Crypt.Prime (isPrime, modPow)
+import System.Random (Random (randomR), StdGen, newStdGen)
 
 data Key = Key Integer Integer deriving (Show)
 
@@ -42,3 +45,25 @@ encrypt (Key n e) = modPow n e
 
 decrypt :: Key -> Integer -> Integer
 decrypt (Key n d) = modPow n d
+
+data RSA = RSA {publicKey :: Integer, privateKey :: Integer, decrypt' :: Integer -> Integer, encrypt' :: Integer -> Integer}
+
+instance Show RSA where
+  show (RSA e d _ _) = "RSA(publicKey = " ++ show d ++ ", privateKey = " ++ show e ++ ")"
+
+-- createRSA :: Integer -> Integer -> [RSA]
+-- Some prime number:
+-- 2 3 5 7 11 13 17 19 23 29
+-- 31 37 41 43 47 53 59 61 67 71
+-- 73 79 83 89 97
+-- 101 103 107 109 113
+-- 127 131 137 139 149 151 157 163 167 173
+-- 179 181 191 193 197 199 211
+createRSA :: Integer -> Integer -> [RSA]
+createRSA p q =
+  let n = p * q
+      l = lcm (p - 1) (q - 1)
+      es = filter (\e -> gcd e l == 1) [2 .. l -1]
+      eds = (\e -> (e,) <$> filter (\d -> e * d `mod` l == 1) [2 .. l -1]) =<< es
+      fn p x = x ^ p `mod` n
+   in fmap (\(e, d) -> RSA e d (fn e) (fn d)) eds
